@@ -4,13 +4,17 @@
 
 rm(list = ls())
 
+# set working directory to project directory
+
+setwd("C:/Users/avata/OneDrive/Desktop/R/thesis2122")
+
 # load libraries
 
 library(tidyverse)
 
-# load and store data
+# load data
 
-load("C:\Users\avata\OneDrive\Desktop\POL 194H\CMPS\ICPSR_38040\DS0001\CMPS2016-Data.rda")
+load("C:/Users/avata/OneDrive/Desktop/POL 194H/CMPS/ICPSR_38040/DS0001/CMPS2016-Data.rda")
 
 # store data in a nicer frame!!
 
@@ -76,7 +80,6 @@ table(df2$linkedfate_howmuch,
       df2$linkedfate_how_num)
 
 df2$linkedfate_pos_num <- as.numeric(df2$linkedfate_positive) 
-df2$linkedfate_pos_num %>% mutate(df2$linkedfate_pos_num=recode(df2$linkedfate_pos_num,1=1,2=-1,3=0))
 
 # Spencer's Code
 
