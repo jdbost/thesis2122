@@ -20,7 +20,7 @@ load("C:/Users/avata/OneDrive/Desktop/POL 194H/CMPS/ICPSR_38040/DS0001/CMPS2016-
 
 df <- da38040.0001
 
-# Data cleaning - INDEPENDENT VARIABLES
+#### Data cleaning - INDEPENDENT VARIABLES ####
 
 df$identity <- df$C129 # C129 "When it comes to religion, what do you consider yourself to be?" 
 df$express <- df$C131 # C131 "Do you attend religious service or gathering: at least every week, almost every week, a few times a month, only a few times during the year, hardly ever or never?" 
@@ -119,13 +119,23 @@ table(df2$identity)
 summary(df2$identity_num)
 table(df2$identity_num)
 
-df2$id_drop <- droplevels.factor(df2$identity, exclude = "(8) Other:(SPECIFY)") %>%
+df2$identity_reg <- droplevels.factor(df2$identity, exclude = "(8) Other:(SPECIFY)") %>%
                     as.numeric()
 
-table(df2$id_drop,
+table(df2$identity_reg,
       df2$identity_num)
 
-# # 01/12/2022: success I think!
+df2$identity_hist[df2$identity == "(1) Catholic"] <- "Catholic"
+df2$identity_hist[df2$identity == "(2) Protestant"] <- "Protestant"
+df2$identity_hist[df2$identity == "(3) Christian"] <- "Christian"
+df2$identity_hist[df2$identity == "(4) Muslim"] <- "Muslim"
+df2$identity_hist[df2$identity == "(5) Hindu"] <- "Hindu"
+df2$identity_hist[df2$identity == "(6) Buddhist"] <- "Buddhist"
+df2$identity_hist[df2$identity == "(7) Atheist or agnostic"] <- "Atheist or agnostic"
+df2$identity_hist[df2$identity == "(8) Other:(SPECIFY)"] <- "Other"
+df2$identity_hist[df2$identity == "(9) None"] <- "None"
+
+table(df2$identity_hist)
 
 # df2$express: makes sure analysis uses express_num;
 # # might want to recode the variable in its factor form too
@@ -223,10 +233,12 @@ breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
 
 #### HISTOGRAMS/BARPLOTS ####
 
+library(ggplot2)
+
 # Example code from https://rkabacoff.github.io/datavis/Univariate.html#categorical
 
-linkedfate_hist_graph <- ggplot(df2, 
-                       aes(x = linkedfate_hist, 
+linkedfate_hist_bar <- ggplot(df2, 
+                       aes(x = linkedfate_reg, 
                        y = ..count.. / sum(..count..))) + 
               geom_bar() +
               labs(x = "", 
@@ -234,21 +246,49 @@ linkedfate_hist_graph <- ggplot(df2,
                    title  = "Do you think what happens generally to Asian people in this country will have something to do with \nwhat happens in your life?") +
               scale_y_continuous(labels = scales::percent)
 
+
 # # Example code https://www.delftstack.com/howto/r/ggplot-axis-tick-labels-in-r/
 
-linkedfate_hist_graph <- linkedfate_hist_graph + 
+linkedfate_hist_bar <- linkedfate_hist_bar + 
   scale_x_discrete(labels = c("No","Not Very Much","Some","A lot"))
 
-linkedfate_hist_graph
+linkedfate_hist_bar
+
+# how to reorder the x-axis? reorder the variable?
 
 
-binned_relig_ethn_graph <- ggplot(df2,aes(x = df2$binned_relig_ethn_hist,y = ..count.. / sum(..count..))) + 
+binned_relig_ethn_bar <- ggplot(df2,aes(x = df2$binned_relig_ethn_hist,y = ..count.. / sum(..count..))) + 
   geom_bar() +
   labs(x = "", 
        y = "Percent", 
        title  = "What is the approximate racial/ethnic composition of your place of religious worship or gathering?")
 
-binned_relig_ethn_graph
+binned_relig_ethn_bar
+
+identity_bar <- ggplot(df2, 
+                aes(x = identity_hist, 
+                y = ..count.. / sum(..count..))) + 
+  geom_bar() +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "When it comes to religion, what do you consider yourself to be?") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_discrete(labels = c("Catholic",
+                              "Protestant",
+                              "Christian",
+                              "Muslim",
+                              "Hindu",
+                              "Buddhist",
+                              "Atheist or agnostic",
+                              "Other",
+                              "None"))
+
+# xlabel adjustment code https://rkabacoff.github.io/datavis/Univariate.html#Univariate
+
+identity_bar + theme(axis.text.x = element_text(angle = 45, 
+                                                hjust = 1))
+
+identity_bar
 
 #### Basic correlations (we're going to use linear regression) ####
 

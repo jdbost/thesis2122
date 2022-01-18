@@ -4,6 +4,7 @@
 
 # move to the project directory
 cd C:/Users/avata/OneDrive/Desktop/R/thesis2122
+
 # initiate the upstream tracking of the project on the GitHub repo
 git remote add origin https://github.com/jdbost/thesis2122
 
