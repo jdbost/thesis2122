@@ -20,8 +20,6 @@ git push origin main
 
 library(usethis)
 
-GITHUB_PAT = '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'
+GITHUB_PAT = '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'
 
 use_github(protocol = 'https', auth_token = Sys.getenv("GITHUB_PAT"))
-
-# PAT from 01/17/2022 (7 day) - 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
