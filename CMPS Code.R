@@ -31,7 +31,7 @@ df$relig_ethn <- df$C133_4 # C133_4 "Please indicate the approximate racial/ethn
 
 df$linkedfate <- df$C150 # C150 "Do you think what happens generally to [ANS to S2] people in this country will have something to do with what happens in your life?" 
 df$linkedfate_howmuch <- df$C151 # C151 "Will it [ANS C150] affect you . a lot, some, not very much?"
-df$linkedfate_positive <- df$C152 # C152 Some people feel positively about the link they have with their racial or ethnic group members, while others feel negatively about the idea that their lives may be influenced by how well the larger group is doing. Which comes closer to your feelings?"
+df$linkedfate_positive <- df$C152 # C152 "Some people feel positively about the link they have with their racial or ethnic group members, while others feel negatively about the idea that their lives may be influenced by how well the larger group is doing. Which comes closer to your feelings?"
 
 # Just Asian Americans (3006 observations)
 
@@ -136,6 +136,13 @@ df2$identity_hist[df2$identity == "(8) Other:(SPECIFY)"] <- "Other"
 df2$identity_hist[df2$identity == "(9) None"] <- "None"
 
 table(df2$identity_hist)
+
+# Breakdown by identity and express
+breakdown_table_identity_express <- df2[c("identity_reg", "express_num")] %>%
+  group_by(identity_reg,express_num) %>%
+  summarize(Freq=n())
+
+View(breakdown_table_identity_express)
 
 # df2$express: makes sure analysis uses express_num;
 # # might want to recode the variable in its factor form too
@@ -265,28 +272,32 @@ binned_relig_ethn_bar <- ggplot(df2,aes(x = df2$binned_relig_ethn_hist,y = ..cou
 
 binned_relig_ethn_bar
 
+
+# xlabel reordering w/limits() http://www.cookbook-r.com/Graphs/Axes_(ggplot2)/#changing-the-order-of-items
+
 identity_bar <- ggplot(df2, 
                 aes(x = identity_hist, 
                 y = ..count.. / sum(..count..))) + 
-  geom_bar() +
-  labs(x = "", 
-       y = "Percent", 
-       title  = "When it comes to religion, what do you consider yourself to be?") +
-  scale_y_continuous(labels = scales::percent) +
-  scale_x_discrete(labels = c("Catholic",
-                              "Protestant",
-                              "Christian",
-                              "Muslim",
-                              "Hindu",
-                              "Buddhist",
-                              "Atheist or agnostic",
-                              "Other",
-                              "None"))
+        geom_bar(fill = 'steelblue',
+                 color = 'black') +
+        labs(x = "", 
+             y = "Percent", 
+             title  = "When it comes to religion, what do you consider yourself to be?") +
+        scale_y_continuous(labels = scales::percent) +
+        scale_x_discrete(limits = c("Catholic",
+                                    "Protestant",
+                                    "Christian",
+                                    "Muslim",
+                                    "Hindu",
+                                    "Buddhist",
+                                    "Atheist or agnostic",
+                                    "Other",
+                                    "None"))
 
-# xlabel adjustment code https://rkabacoff.github.io/datavis/Univariate.html#Univariate
+# axis label rotation https://rkabacoff.github.io/datavis/Univariate.html#categorical
 
-identity_bar + theme(axis.text.x = element_text(angle = 45, 
-                                                hjust = 1))
+identity_bar + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+                theme_minimal()
 
 identity_bar
 
