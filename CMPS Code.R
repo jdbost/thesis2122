@@ -138,6 +138,7 @@ df2$identity_hist[df2$identity == "(9) None"] <- "None"
 
 table(df2$identity_hist)
 
+<<<<<<< HEAD
 # Spencer's example
 
 identity_num_pct <- df2 %>% 
@@ -153,11 +154,25 @@ table(identity_num_pct)
 
 breakdown_table_identity_express <- df2[c("identity", "express")] %>%
   group_by(identity,express) %>%
+=======
+# Example percentage code https://data-hacks.com/create-table-percentages-r
+
+table(my_values) * 100 / length(my_values)    # Calculate percentages
+
+# Breakdown by identity and express
+
+breakdown_table_identity_express <- df2[c("identity_reg", "express_num")] %>%
+  group_by(identity_reg,express_num) %>%
+>>>>>>> 67044a9d0c68ef41a16aab978912f81a31304b3c
   summarize(Freq=n())
 
 breakdown_table_identity_express_pct <- breakdown_table_identity_express / length(breakdown_table_identity_express)
 
+<<<<<<< HEAD
 View(breakdown_table_identity_express)
+=======
+View(breakdown_table_identity_express_pct)
+>>>>>>> 67044a9d0c68ef41a16aab978912f81a31304b3c
 
 # df2$express: makes sure analysis uses express_num;
 # # might want to recode the variable in its factor form too
@@ -270,7 +285,7 @@ library(ggplot2)
 # Example code from https://rkabacoff.github.io/datavis/Univariate.html#categorical
 
 linkedfate_hist_bar <- ggplot(df2, 
-                       aes(x = linkedfate_reg, 
+                       aes(x = linkedfate_hist, 
                        y = ..count.. / sum(..count..))) + 
               geom_bar() +
               labs(x = "", 
