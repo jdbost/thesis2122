@@ -50,7 +50,7 @@ View(df2$linkedfate_positive) # factor
 # If all data matches, proceed!
 
 
-#### RECODE so no factor variables #####
+#### RECODE SO NO FACTOR VARIABLES #####
 
 df2$identity_num <- as.numeric(df2$identity)
 
@@ -125,6 +125,7 @@ df2$identity_reg <- droplevels.factor(df2$identity, exclude = "(8) Other:(SPECIF
 table(df2$identity_reg,
       df2$identity_num)
 
+
 df2$identity_hist[df2$identity == "(1) Catholic"] <- "Catholic"
 df2$identity_hist[df2$identity == "(2) Protestant"] <- "Protestant"
 df2$identity_hist[df2$identity == "(3) Christian"] <- "Christian"
@@ -137,10 +138,24 @@ df2$identity_hist[df2$identity == "(9) None"] <- "None"
 
 table(df2$identity_hist)
 
+# Spencer's example
+
+identity_num_pct <- df2 %>% 
+    group_by(identity_num) %>% 
+    tally() %>% 
+    mutate(pct = n/sum(n))
+
+identity_num_pct <- identity_num_pct * 100
+
+table(identity_num_pct)
+
 # Breakdown by identity and express
-breakdown_table_identity_express <- df2[c("identity_reg", "express_num")] %>%
-  group_by(identity_reg,express_num) %>%
+
+breakdown_table_identity_express <- df2[c("identity", "express")] %>%
+  group_by(identity,express) %>%
   summarize(Freq=n())
+
+breakdown_table_identity_express_pct <- breakdown_table_identity_express / length(breakdown_table_identity_express)
 
 View(breakdown_table_identity_express)
 
@@ -150,7 +165,15 @@ View(breakdown_table_identity_express)
 summary(df2$express)
 summary(df2$express_num)
 
-# # 01/12/2022: express_num good to go!
+df2$express_hist[df2$express_num == 0] <- "Never"
+df2$express_hist[df2$express_num == 1] <- "Hardly ever"
+df2$express_hist[df2$express_num == 2] <- "Only a few times during the year"
+df2$express_hist[df2$express_num == 3] <- "A few times a month"
+df2$express_hist[df2$express_num == 4] <- "Almost every week"
+df2$express_hist[df2$express_num == 5] <- "At least every week"
+
+table(df2$express_hist)
+
 
 # df2$aapiethnicity: exclude the 1 Iranian (sorry), think about narrowing discussion >100/Top 7 groups
 # # which means creating "Other" category
@@ -225,12 +248,14 @@ View(df2$linkedfate_pos_num2)
 breakdown_table_ethn_identity <- df2[c("aapiethnicity", "identity")] %>%
   group_by(aapiethnicity,identity) %>%
   summarize(Freq=n())
+
 View(breakdown_table_ethn_identity)
 
 # Breakdown by identity and express
 breakdown_table_identity_express <- df2[c("identity", "express_num")] %>%
   group_by(identity,express_num) %>%
   summarize(Freq=n())
+
 View(breakdown_table_identity_express)
 
 # Breakdown by identity and ethnic makeup of place of worship
@@ -253,15 +278,12 @@ linkedfate_hist_bar <- ggplot(df2,
                    title  = "Do you think what happens generally to Asian people in this country will have something to do with \nwhat happens in your life?") +
               scale_y_continuous(labels = scales::percent)
 
-
 # # Example code https://www.delftstack.com/howto/r/ggplot-axis-tick-labels-in-r/
 
 linkedfate_hist_bar <- linkedfate_hist_bar + 
-  scale_x_discrete(labels = c("No","Not Very Much","Some","A lot"))
+  scale_x_discrete(limits = c("No","Not Very Much","Some","A lot"))
 
 linkedfate_hist_bar
-
-# how to reorder the x-axis? reorder the variable?
 
 
 binned_relig_ethn_bar <- ggplot(df2,aes(x = df2$binned_relig_ethn_hist,y = ..count.. / sum(..count..))) + 
@@ -295,11 +317,45 @@ identity_bar <- ggplot(df2,
                                     "None"))
 
 # axis label rotation https://rkabacoff.github.io/datavis/Univariate.html#categorical
+# # axis label rotation troubleshoot!!!!!!!!
 
 identity_bar + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
                 theme_minimal()
 
 identity_bar
+
+
+# Example code https://rkabacoff.github.io/datavis/Bivariate.html#Categorical-Categorical
+
+identity_express_stackbar <- ggplot(df2, 
+                                    aes(x = express_hist, 
+                                    fill = identity_hist)) + 
+                geom_bar(position = "stack")
+
+identity_express_stackbar <- identity_express_stackbar +
+                labs(x = "", 
+                     y = "Percent", 
+                     title  = "How often do you attend a religious service or gathering") +
+                scale_y_continuous(labels = scales::percent) +
+                theme_minimal() +
+                coord_flip()
+                                            
+identity_express_stackbar + scale_x_discrete(limits = c("Never",
+                                                        "Hardly ever",
+                                                        "Only a few times during the year",
+                                                        "A few times a month",
+                                                        "Almost every week",
+                                                        "At least every week"))
+
+# Example code http://www.cookbook-r.com/Graphs/Axes_(ggplot2)/#reversing-the-direction-of-an-axis
+
+bp + scale_x_discrete(limits = rev(levels(PlantGrowth$group)))
+
+identity_express_stackbar + scale_x_discrete(limits = rev(levels(df2$express_hist)))
+
+                                             
+identity_express_stackbar
+
 
 #### Basic correlations (we're going to use linear regression) ####
 
