@@ -404,7 +404,11 @@ identity_express_stackbar <- identity_express_stackbar +
 identity_express_stackbar
 
 
+<<<<<<< HEAD
 # Religious identity x ethnicity stacked bar
+=======
+# Religious identity x ethnicity stacked bar -- maybe this should be pie chart!!!!!!
+>>>>>>> 0f74029e76ae90009a43ccb873f271d8fdacb8c0
 
 identity_aapi_stackbar <- ggplot(df2, 
                                  aes(x = identity_hist, 
@@ -420,6 +424,7 @@ identity_aapi_stackbar <- ggplot(df2,
   
 identity_aapi_stackbar
 
+<<<<<<< HEAD
 # Ethnic linked fate histogram
 
 linkedfate_pos_bar <- ggplot(df2, 
@@ -437,6 +442,8 @@ linkedfate_pos_bar <- ggplot(df2,
 linkedfate_pos_bar
 
 
+=======
+>>>>>>> 0f74029e76ae90009a43ccb873f271d8fdacb8c0
 #### Basic correlations (we're going to use linear regression) ####
 
 summary(lm(data=df2, linkedfate_yes~express_num))
