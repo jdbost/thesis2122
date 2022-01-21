@@ -98,10 +98,12 @@ df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == -1] <- "Negatively"
 df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == 1] <- "Positively"
 df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == 0] <- "Neither positive nor negative"
 
-df2$linkedfate_pos_hist <- factor(df2$linkedfate_pos_hist,levels = c("Positively","Negatively","Neither positive nor negative"))
+df2$linkedfate_pos_hist <- factor(df2$linkedfate_pos_hist,
+                                  levels = c("Positively",
+                                             "Negatively",
+                                             "Neither positive nor negative"))
                                   
 table(df2$linkedfate_pos_hist)
-
 
                                   
 df2$binned_relig_ethn <- ifelse(df2$C133_4<=25,1,
@@ -162,17 +164,6 @@ df2$identity_hist <- factor(df2$identity_hist,
 
 table(df2$identity_hist)
 
-# Spencer's example
-
-identity_num_pct <- df2 %>% 
-    group_by(identity_num) %>% 
-    tally() %>% 
-    mutate(pct = n/sum(n))
-
-identity_num_pct <- identity_num_pct * 100
-
-table(identity_num_pct)
-
 
 # df2$express: makes sure analysis uses express_num;
 # # might want to recode the variable in its factor form too
@@ -205,16 +196,6 @@ summary(df2$aapiethnicity)
 table(df2$aapiethnicity, 
       df2$aapiethnicity_num)
 
-# # 01/11/2022: try collapsing small groups using fct_collapse() https://stackoverflow.com/questions/36568758/combining-factor-level-in-r
-
-df2$aapi <- fct_collapse(df2$aapiethnicity, Other = c("(08) Pakistani",
-                                                      "(09) Thai",
-                                                      "(10) Iranian",
-                                                      "(11) Bangladeshi",
-                                                      "(12) Laotian",
-                                                      "(13) Cambodian")) %>%
-              droplevels.factor(df2$aapiethnicity, exclude = "(14) Other:(SPECIFY)") %>%
-                as.numeric()
 
 df2$aapi_hist[df2$aapiethnicity_num == 1] <- "Chinese"
 df2$aapi_hist[df2$aapiethnicity_num == 2] <- "Taiwanese"
@@ -262,7 +243,6 @@ df2$linkedfate_reg[df2$linkedfate_howmuch == "(2) Some"] <- 2
 df2$linkedfate_reg[df2$linkedfate_howmuch == "(1) A lot"] <- 3
 
 table(df2$linkedfate_reg)
-class(df2$linkedfate_reg)
 
 
 # # Spencer's Code - edited
@@ -279,7 +259,11 @@ df2$linkedfate_hist[df2$linkedfate_howmuch == "(1) A lot"] <- "A lot"
 
 # from https://sebastiansauer.github.io/ordering-bars/
 
-df2$linkedfate_hist <- factor(df2$linkedfate_hist,levels = c("No","Not very much","Some","A lot"))
+df2$linkedfate_hist <- factor(df2$linkedfate_hist,
+                              levels = c("No",
+                                         "Not very much",
+                                         "Some",
+                                         "A lot"))
 
 table(df2$linkedfate_hist)
 
@@ -288,32 +272,34 @@ table(df2$linkedfate_hist)
 
 # Spencer's example - Proportion/percent table
 
-table <- table(df2$linkedfate_reg)
-prop.table(table)*100
+# # table <- table(df2$linkedfate_reg)
+# # prop.table(table)*100
 
 # Breakdown by identity and express
 
-# Spencer's example - Proportion/percent table
+# # Spencer's example - Proportion/percent table
 
-df2$identity_pct <- table(df2$identity_num)
-df2$identity_pct <- prop.table(df2$identity_pct)*100
+# # Also from Dr. B - https://www.statmethods.net/stats/frequencies.html
 
+# # prop.table(your_table, 1)
+# # prop.table(your_table, 2)
+# # 1 = row percentages
+# # 2 = column percentages
+# # prop.table(your_table) # cell percentages
+# # your_table <- table(df$var1, df$var2)
+# # prop.table(df$var1, df$var2, 1)
 
-df2$express_pct <- table(df2$express_num)
-df2$express_pct <- prop.table(df2$express_pct)*100
+# # your_table <- table(df$var1, df$var2)
+# # prop.table(your_table)
+# # prop.table(table(df$var1, df$var2))
 
-table_identity_express_pct <- df2[c("identity_pct", "express_pct")] %>%
-  group_by(identity_pct,express_pct) %>%
-  summarize(Freq=n())
+prop.table(table(df2$identity_num,df2$express_num),1)*100
 
-table(table_identity_express_pct)
+View(prop.table(table(df2$identity_num,df2$express_num),1)*100)
 
 # Breakdown by national origin/ethnicity and religion
-breakdown_table_ethn_identity <- df2[c("aapiethnicity", "identity")] %>%
-  group_by(aapiethnicity,identity) %>%
-  summarize(Freq=n())
 
-View(breakdown_table_ethn_identity)
+prop.table(table(df2$identity_num,df2$aapi),1)*100
 
 # Breakdown by identity and ethnic makeup of place of worship
 breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
@@ -325,7 +311,7 @@ breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
 library(ggplot2)
 
 
-# Linkedfate histogram/barplot
+# Linkedfate histogram/barplot - Univariate
 
 # Example code from https://rkabacoff.github.io/datavis/Univariate.html#categorical
 
@@ -333,7 +319,7 @@ linkedfate_hist_bar <- ggplot(df2,
                        aes(x = linkedfate_hist, 
                        y = ..count.. / sum(..count..))) + 
               geom_bar(fill = 'steelblue',
-                       color = 'black',
+                       color = 'steelblue',
                        width = 0.75) +
               labs(x = "", 
                    y = "Percent", 
@@ -344,31 +330,30 @@ linkedfate_hist_bar <- ggplot(df2,
 linkedfate_hist_bar
 
 
-# Religious identity barplot
+# Religious identity barplot - Univariate
 
 identity_bar <- ggplot(df2, 
                        aes(x = identity_hist, 
                            y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
-           color = 'black') +
+           color = 'steelblue') +
   labs(x = "", 
        y = "Percent", 
        title  = "When it comes to religion, what do you consider yourself to be?",
        fill = "Religious identity") +
-  scale_y_continuous(labels = scales::percent)
+  scale_y_continuous(labels = scales::percent) + 
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+
 
 identity_bar
 
 # axis label rotation https://rkabacoff.github.io/datavis/Univariate.html#categorical
 # # axis label rotation troubleshoot!!!!!!!!
 
-identity_bar + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  theme_minimal()
 
-identity_bar
-
-
-# Place of worship ethnic composition histogram
+# Racial composition of local religious community histogram - Bivariate
 
 binned_relig_ethn_bar <- ggplot(df2,
                                 aes(x = binned_relig_ethn_hist,
@@ -382,7 +367,7 @@ binned_relig_ethn_bar <- ggplot(df2,
 binned_relig_ethn_bar
 
 
-# Religious identity x expression stacked barplot
+# Religious identity x expression stacked barplot - Bivariate
 
 # Example code https://rkabacoff.github.io/datavis/Bivariate.html#Categorical-Categorical
 
@@ -399,16 +384,14 @@ identity_express_stackbar <- identity_express_stackbar +
                      fill = "Religion") +
                 scale_y_continuous(labels = scales::percent) +
                 theme_minimal() +
-                coord_flip()
+                theme(axis.text.x = element_text(angle = 45,
+                                                 hjust = 1))
+
                                             
 identity_express_stackbar
 
 
-<<<<<<< HEAD
-# Religious identity x ethnicity stacked bar
-=======
-# Religious identity x ethnicity stacked bar -- maybe this should be pie chart!!!!!!
->>>>>>> 0f74029e76ae90009a43ccb873f271d8fdacb8c0
+# Religious identity x ethnicity stacked bar - Bivariate
 
 identity_aapi_stackbar <- ggplot(df2, 
                                  aes(x = identity_hist, 
@@ -420,12 +403,15 @@ identity_aapi_stackbar <- ggplot(df2,
        title  = "When it comes to religion, what do you consider yourself to be?",
        fill = "Ethnicity") +
   scale_y_continuous(labels = scales::percent) +
-  theme_minimal() 
-  
+  theme_minimal() +
+  coord_flip()
+
 identity_aapi_stackbar
 
-<<<<<<< HEAD
-# Ethnic linked fate histogram
+# sub for angled theme(axis.text.x = element_text(angle = 45,hjust = 1))
+
+
+# Ethnic linked fate histogram - Univariate
 
 linkedfate_pos_bar <- ggplot(df2, 
             aes(x = linkedfate_pos_hist, 
@@ -442,8 +428,42 @@ linkedfate_pos_bar <- ggplot(df2,
 linkedfate_pos_bar
 
 
-=======
->>>>>>> 0f74029e76ae90009a43ccb873f271d8fdacb8c0
+# Ethnicity histogram - Univariate
+
+aapi_bar <- ggplot(df2, 
+                   aes(x = aapi_hist, 
+                       y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.75) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "What do you consider to be your primary ethnicity or family ancestry?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+
+aapi_bar
+
+
+# External expression - Univariate
+
+express_bar <- ggplot(df2, 
+                      aes(x = express_hist, 
+                          y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.75) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "How often do you attend a religious service or gathering?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1))
+
+express_bar
+
+
 #### Basic correlations (we're going to use linear regression) ####
 
 summary(lm(data=df2, linkedfate_yes~express_num))
