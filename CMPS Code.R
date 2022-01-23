@@ -224,6 +224,11 @@ df2$aapi_hist <- factor(df2$aapi_hist,levels = c("Chinese",
 
 table(df2$aapi_hist)
 
+df2$aapi <- as.numeric(df2$aapi_hist)
+
+table(df2$aapi_hist,
+      df2$aapi)
+
 # df2$relig_ethn: use binned_relig_ethn for all discussion and analysis
 
 summary(df2$relig_ethn)
@@ -293,13 +298,13 @@ table(df2$linkedfate_hist)
 # # prop.table(your_table)
 # # prop.table(table(df$var1, df$var2))
 
-prop.table(table(df2$identity_num,df2$express_num),1)*100
+prop.table(table(df2$identity_hist,df2$express_hist),1)*100
 
-View(prop.table(table(df2$identity_num,df2$express_num),1)*100)
 
 # Breakdown by national origin/ethnicity and religion
 
-prop.table(table(df2$identity_num,df2$aapi),1)*100
+prop.table(table(df2$identity_hist,df2$aapi_hist),1)*100
+
 
 # Breakdown by identity and ethnic makeup of place of worship
 breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
@@ -310,7 +315,6 @@ breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
 
 library(ggplot2)
 
-
 # Linkedfate histogram/barplot - Univariate
 
 # Example code from https://rkabacoff.github.io/datavis/Univariate.html#categorical
@@ -319,7 +323,7 @@ linkedfate_hist_bar <- ggplot(df2,
                        aes(x = linkedfate_hist, 
                        y = ..count.. / sum(..count..))) + 
               geom_bar(fill = 'steelblue',
-                       color = 'steelblue',
+                       color = 'black',
                        width = 0.75) +
               labs(x = "", 
                    y = "Percent", 
@@ -336,7 +340,7 @@ identity_bar <- ggplot(df2,
                        aes(x = identity_hist, 
                            y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
-           color = 'steelblue') +
+           color = 'black') +
   labs(x = "", 
        y = "Percent", 
        title  = "When it comes to religion, what do you consider yourself to be?",
@@ -345,7 +349,6 @@ identity_bar <- ggplot(df2,
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45,
                                    hjust = 1))
-
 
 identity_bar
 
@@ -359,10 +362,12 @@ binned_relig_ethn_bar <- ggplot(df2,
                                 aes(x = binned_relig_ethn_hist,
                                     y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
-           color = 'black') +
+           color = 'black',
+           width = 0.75) +
   labs(x = "", 
        y = "Percent", 
-       title  = "What is the approximate racial/ethnic composition of your place of religious worship or gathering?")
+       title  = "Approximate percentage of Asians attending respondents' place of religious worship or gathering") +
+  theme_minimal()
 
 binned_relig_ethn_bar
 
@@ -458,7 +463,7 @@ express_bar <- ggplot(df2,
        title  = "How often do you attend a religious service or gathering?") +
   scale_y_continuous(labels = scales::percent) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, 
+  theme(axis.text.x = element_text(angle = 30, 
                                    hjust = 1))
 
 express_bar
