@@ -23,7 +23,7 @@ df <- da38040.0001
 
 
 
-#### Data cleaning - INDEPENDENT VARIABLES ####
+#### DATA CLEANING - INDEPENDENT VARIABLES ####
 
 df$identity <- df$C129 # C129 "When it comes to religion, what do you consider yourself to be?" 
 df$express <- df$C131 # C131 "Do you attend religious service or gathering: at least every week, almost every week, a few times a month, only a few times during the year, hardly ever or never?" 
@@ -166,6 +166,8 @@ df2$identity_hist <- factor(df2$identity_hist,
 
 table(df2$identity_hist)
 
+df2$identity_reg <- as.numeric(df2$identity_hist)
+
 
 # df2$express: makes sure analysis uses express_num;
 # # might want to recode the variable in its factor form too
@@ -224,13 +226,13 @@ df2$aapi_hist <- factor(df2$aapi_hist,levels = c("Chinese",
                                                  "Japanese",
                                                  "Other"))
 
-
 table(df2$aapi_hist)
 
-df2$aapi <- as.numeric(df2$aapi_hist)
+df2$aapi_reg <- as.numeric(df2$aapi_hist)
 
 table(df2$aapi_hist,
-      df2$aapi)
+      df2$aapi_reg)
+
 
 # df2$relig_ethn: use binned_relig_ethn for all discussion and analysis
 
@@ -323,6 +325,10 @@ breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
 
 library(ggplot2)
 
+# Center title: https://stackoverflow.com/questions/40675778/center-plot-title-in-ggplot2
+
+theme(plot.title = element_text(hjust = 0.5))
+
 # Linkedfate histogram/barplot - Univariate
 
 # Example code from https://rkabacoff.github.io/datavis/Univariate.html#categorical
@@ -330,14 +336,16 @@ library(ggplot2)
 linkedfate_hist_bar <- ggplot(df2, 
                        aes(x = linkedfate_hist, 
                        y = ..count.. / sum(..count..))) + 
-              geom_bar(fill = 'steelblue',
-                       color = 'black',
-                       width = 0.75) +
-              labs(x = "", 
-                   y = "Percent", 
-                   title  = "Do you think what happens generally to Asian people in this country \nwill have something to do with what happens in your life?") +
-              scale_y_continuous(labels = scales::percent) +
-              theme_minimal()
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.6) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "Do you think what happens generally to Asian people in this country \nwill have something to do with what happens in your life?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 linkedfate_hist_bar
 
@@ -348,15 +356,15 @@ identity_bar <- ggplot(df2,
                        aes(x = identity_hist, 
                            y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
-           color = 'black') +
+           color = 'black',
+           width = 0.75) +
   labs(x = "", 
        y = "Percent", 
        title  = "When it comes to religion, what do you consider yourself to be?",
        fill = "Religious identity") +
   scale_y_continuous(labels = scales::percent) + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30,
-                                   hjust = 1))
+  theme(plot.title = element_text(hjust = 0.5))
 
 identity_bar
 
@@ -368,14 +376,73 @@ binned_relig_ethn_bar <- ggplot(data=subset (df2, !is.na(binned_relig_ethn_hist)
                                     y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
            color = 'black',
-           width = 0.75) +
+           width = 0.6) +
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "", 
        y = "Percent", 
        title  = "Approximate percentage of Asians attending respondents' place of religious worship or gathering") +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
 binned_relig_ethn_bar
+
+
+
+# Ethnic linked fate histogram - Univariate
+
+linkedfate_pos_bar <- ggplot(df2, 
+  aes(x = linkedfate_pos_hist, 
+      y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.5) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "Do you feel positively, negatively, nor neither positive or negative \nabout the link you have with your racial or ethnic group members?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+linkedfate_pos_bar
+
+
+# Ethnicity histogram - Univariate
+
+aapi_bar <- ggplot(df2, 
+                   aes(x = aapi_hist, 
+                       y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.65) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "What do you consider to be your primary ethnicity or family ancestry?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+aapi_bar
+
+
+# External expression - Univariate
+
+# # Get rid of NA column: https://stackoverflow.com/questions/17216358/eliminating-nas-from-a-ggplot#36778937
+
+express_bar <- ggplot(data=subset (df2, !is.na(express_hist)),
+                      aes(x = express_hist, 
+                          y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.6) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "How often do you attend a religious service or gathering?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30,hjust = 1),
+        plot.title = element_text(hjust = 0.5))
+
+express_bar
 
 
 # Religious identity x expression stacked barplot - Bivariate
@@ -384,21 +451,20 @@ binned_relig_ethn_bar
 
 identity_express_stackbar <- ggplot(df2, 
                                     aes(x = express_hist, 
-                                    fill = identity_hist)) + 
-                geom_bar(position = "stack",
-                         width = 0.75)
+                                        fill = identity_hist)) + 
+  geom_bar(position = "stack",
+           width = 0.75)
 
 identity_express_stackbar <- identity_express_stackbar +
-                labs(x = "", 
-                     y = "Percent", 
-                     title  = "How often do you attend a religious service or gathering?",
-                     fill = "Religion") +
-                scale_y_continuous(labels = scales::percent) +
-                theme_minimal() +
-                theme(axis.text.x = element_text(angle = 30,
-                                                 hjust = 1))
+  labs(x = "", 
+       y = "Percent", 
+       title  = "How often do you attend a religious service or gathering?",
+       fill = "Religion") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30,hjust = 1),
+        plot.title = element_text(hjust = 0.5))
 
-                                            
 identity_express_stackbar
 
 
@@ -422,60 +488,52 @@ identity_aapi_stackbar
 # sub for angled theme(axis.text.x = element_text(angle = 45,hjust = 1))
 
 
-# Ethnic linked fate histogram - Univariate
 
-linkedfate_pos_bar <- ggplot(df2, 
-            aes(x = linkedfate_pos_hist, 
-                y = ..count.. / sum(..count..))) + 
-            geom_bar(fill = 'steelblue',
-                     color = 'black',
-                     width = 0.5) +
-            labs(x = "", 
-                 y = "Percent", 
-                 title  = "Do you feel positively, negatively, nor neither positive or negative \nabout the link you have with your racial or ethnic group members?") +
-            scale_y_continuous(labels = scales::percent) +
-            theme_minimal()
+#### JITTERPLOTS ####
 
-linkedfate_pos_bar
+# Example code from Minnie
+
+plot(jitter(yourdata$xvariable, factor=2), jitter(yourdata$yvariable, factor=2),
+     main="your title",
+     col="cornflowerblue",
+     pch=20,
+     xlab = ("x label"),
+     ylab=("y label"))
 
 
-# Ethnicity histogram - Univariate
+plot(jitter(df2$identity_reg, factor=2), jitter(df2$aapi_reg, factor=2),
+     main="your title",
+     col="cornflowerblue",
+     pch=20,
+     xlab = ("x label"),
+     ylab=("y label"))
 
-aapi_bar <- ggplot(df2, 
-                   aes(x = aapi_hist, 
-                       y = ..count.. / sum(..count..))) + 
-  geom_bar(fill = 'steelblue',
-           color = 'black',
-           width = 0.75) +
-  labs(x = "", 
-       y = "Percent", 
-       title  = "What do you consider to be your primary ethnicity or family ancestry?") +
-  scale_y_continuous(labels = scales::percent) +
-  theme_minimal()
+# ggplot2 version
 
-aapi_bar
+identity_aapi_jitter <- ggplot(df2, 
+                               aes(x = identity_hist, 
+                                   y = aapi_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Religious Identity", 
+       y = "Ethnicity", 
+       title  = "Religious Identity by Ethnic Group") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+identity_aapi_jitter
 
 
-# External expression - Univariate
+identity_express_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
+                               aes(x = identity_hist, 
+                                   y = express_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Religious Identity", 
+       y = "Level of Religious Expression", 
+       title  = "Level of Religious Expression by Religious Identity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
 
-# # Get rid of NA column: https://stackoverflow.com/questions/17216358/eliminating-nas-from-a-ggplot#36778937
-
-express_bar <- ggplot(data=subset (df2, !is.na(express_hist)),
-                      aes(x = express_hist, 
-                          y = ..count.. / sum(..count..))) + 
-  geom_bar(fill = 'steelblue',
-           color = 'black',
-           width = 0.75) +
-  labs(x = "", 
-       y = "Percent", 
-       title  = "How often do you attend a religious service or gathering?") +
-  scale_y_continuous(labels = scales::percent) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 30, 
-                                   hjust = 1))
-
-express_bar
-
+identity_express_jitter
 
 
 
