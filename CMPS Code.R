@@ -20,6 +20,9 @@ load("C:/Users/avata/OneDrive/Desktop/POL 194H/CMPS/ICPSR_38040/DS0001/CMPS2016-
 
 df <- da38040.0001
 
+
+
+
 #### Data cleaning - INDEPENDENT VARIABLES ####
 
 df$identity <- df$C129 # C129 "When it comes to religion, what do you consider yourself to be?" 
@@ -37,8 +40,6 @@ df$linkedfate_positive <- df$C152 # C152 "Some people feel positively about the 
 
 df2 <- df[!is.na(df$aapiethnicity),]
 
-# View() function to check recoding for df2 variables
-
 table(df2$identity)            # factor
 table(df2$express)             # factor
 table(df2$aapiethnicity)       # factor
@@ -47,7 +48,6 @@ table(df2$linkedfate)          # factor
 table(df2$linkedfate_howmuch)  # factor
 table(df2$linkedfate_positive) # factor
 
-# If all data matches, proceed!
 
 
 ## RECODE SO NO FACTOR VARIABLES ##
@@ -57,7 +57,7 @@ df2$identity_num <- as.numeric(df2$identity)
 table(df2$identity,          # table() function checks that new coding is correct!
       df2$identity_num)
 
-df2$express_num <- as.numeric(df2$express) 
+df2$express_num <- as.numeric(df2$express)
 df2$express_num <- (df2$express_num-6)*(-1)
 
 table(df2$express,
@@ -121,6 +121,8 @@ df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 4] <- "76-100%"
 table(df2$binned_relig_ethn_hist)
 
 
+
+
 #### DESCRIPTIVE STATISTICS ####
 
 # These include things like mean, median, mode, quartiles, min, and max
@@ -178,6 +180,8 @@ df2$express_hist[df2$express_num == 3] <- "A few times a month"
 df2$express_hist[df2$express_num == 4] <- "Almost every week"
 df2$express_hist[df2$express_num == 5] <- "At least every week"
 
+
+
 df2$express_hist <- factor(df2$express_hist, 
                            levels = c("Never",
                                       "Hardly ever",
@@ -198,7 +202,7 @@ table(df2$aapiethnicity,
 
 
 df2$aapi_hist[df2$aapiethnicity_num == 1] <- "Chinese"
-df2$aapi_hist[df2$aapiethnicity_num == 2] <- "Taiwanese"
+df2$aapi_hist[df2$aapiethnicity_num == 2] <- "Other"
 df2$aapi_hist[df2$aapiethnicity_num == 3] <- "Indian"
 df2$aapi_hist[df2$aapiethnicity_num == 4] <- "Korean"
 df2$aapi_hist[df2$aapiethnicity_num == 5] <- "Filipino"
@@ -213,7 +217,6 @@ df2$aapi_hist[df2$aapiethnicity_num == 13] <- "Other"
 df2$aapi_hist[df2$aapiethnicity_num == 14] <- "Other"
 
 df2$aapi_hist <- factor(df2$aapi_hist,levels = c("Chinese",
-                                                 "Taiwanese",
                                                  "Indian",
                                                  "Korean",
                                                  "Filipino",
@@ -233,8 +236,6 @@ table(df2$aapi_hist,
 
 summary(df2$relig_ethn)
 summary(df2$binned_relig_ethn)
-
-# # 01/12/2022: this also looks good!
 
 # linked fate variables: present df2$linkedfate_yes + df2$linkedfate_how_num
 
@@ -271,6 +272,9 @@ df2$linkedfate_hist <- factor(df2$linkedfate_hist,
                                          "A lot"))
 
 table(df2$linkedfate_hist)
+
+
+
 
 
 #### BREAKDOWN TABLES ####
@@ -311,6 +315,10 @@ breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
   group_by(identity,relig_ethn) %>%
   summarize(Freq=n())
 
+
+
+
+
 #### HISTOGRAMS/BARPLOTS ####
 
 library(ggplot2)
@@ -347,23 +355,21 @@ identity_bar <- ggplot(df2,
        fill = "Religious identity") +
   scale_y_continuous(labels = scales::percent) + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45,
+  theme(axis.text.x = element_text(angle = 30,
                                    hjust = 1))
 
 identity_bar
 
-# axis label rotation https://rkabacoff.github.io/datavis/Univariate.html#categorical
-# # axis label rotation troubleshoot!!!!!!!!
-
 
 # Racial composition of local religious community histogram - Bivariate
 
-binned_relig_ethn_bar <- ggplot(df2,
+binned_relig_ethn_bar <- ggplot(data=subset (df2, !is.na(binned_relig_ethn_hist)),
                                 aes(x = binned_relig_ethn_hist,
                                     y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
            color = 'black',
            width = 0.75) +
+  scale_y_continuous(labels = scales::percent) + 
   labs(x = "", 
        y = "Percent", 
        title  = "Approximate percentage of Asians attending respondents' place of religious worship or gathering") +
@@ -389,7 +395,7 @@ identity_express_stackbar <- identity_express_stackbar +
                      fill = "Religion") +
                 scale_y_continuous(labels = scales::percent) +
                 theme_minimal() +
-                theme(axis.text.x = element_text(angle = 45,
+                theme(axis.text.x = element_text(angle = 30,
                                                  hjust = 1))
 
                                             
@@ -452,7 +458,9 @@ aapi_bar
 
 # External expression - Univariate
 
-express_bar <- ggplot(df2, 
+# # Get rid of NA column: https://stackoverflow.com/questions/17216358/eliminating-nas-from-a-ggplot#36778937
+
+express_bar <- ggplot(data=subset (df2, !is.na(express_hist)),
                       aes(x = express_hist, 
                           y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
@@ -467,6 +475,8 @@ express_bar <- ggplot(df2,
                                    hjust = 1))
 
 express_bar
+
+
 
 
 #### Basic correlations (we're going to use linear regression) ####
