@@ -23,20 +23,22 @@ df <- da38040.0001
 
 
 
-#### DATA CLEANING - INDEPENDENT VARIABLES ####
+#### DATA CLEANING ####
+
+# Independent Variables
 
 df$identity <- df$C129 # C129 "When it comes to religion, what do you consider yourself to be?" 
 df$express <- df$C131 # C131 "Do you attend religious service or gathering: at least every week, almost every week, a few times a month, only a few times during the year, hardly ever or never?" 
 df$aapiethnicity <- df$S8 # S8 "Asian Americans come from a diversity of backgrounds. What do you consider to be your primary ethnicity or family ancestry:" 
 df$relig_ethn <- df$C133_4 # C133_4 "Please indicate the approximate racial/ethnic composition of your place of religious worship or gathering: Percent Asian"
 
-# Linked fate battery - DEPENDENT VARIABLE
+# Linked fate battery - Dependent Variable
 
 df$linkedfate <- df$C150 # C150 "Do you think what happens generally to [ANS to S2] people in this country will have something to do with what happens in your life?" 
 df$linkedfate_howmuch <- df$C151 # C151 "Will it [ANS C150] affect you . a lot, some, not very much?"
 df$linkedfate_positive <- df$C152 # C152 "Some people feel positively about the link they have with their racial or ethnic group members, while others feel negatively about the idea that their lives may be influenced by how well the larger group is doing. Which comes closer to your feelings?"
 
-# Just Asian Americans (3006 observations)
+# Just Asian Americans - 3006 observations
 
 df2 <- df[!is.na(df$aapiethnicity),]
 
@@ -542,10 +544,10 @@ identity_express_jitter
 summary(lm(data=df2, linkedfate_yes~express_num))
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~express_num)) # This is a subsetting regression
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~express_num))
-summary(lm(data=df2, linkedfate_yes~identity))
-summary(lm(data=df2, linkedfate_yes~religion*aapiethnicity)) # This is an interaction effect
-summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~religion)) # This is an interaction effect
-summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~religion)) 
+summary(lm(data=df2, linkedfate_yes~identity_hist))
+summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_hist)) # This is an interaction effect
+summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identity_reg)) 
 
 #### Task list: #####
 ## 1 - check to make sure all the independent variables are coded as you want
