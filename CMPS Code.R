@@ -59,27 +59,32 @@ df2$identity_num <- as.numeric(df2$identity)
 table(df2$identity,          # table() function checks that new coding is correct!
       df2$identity_num)
 
+
 df2$express_num <- as.numeric(df2$express)
 df2$express_num <- (df2$express_num-6)*(-1)
 
 table(df2$express,
       df2$express_num)
 
+
 df2$aapiethnicity_num <- as.numeric(df2$aapiethnicity)
 
 table(df2$aapiethnicity,
       df2$aapiethnicity_num)
+
 
 df2$linkedfate_yes <- ifelse(df2$linkedfate=="(1) Yes", 1, 0)
 
 table(df2$linkedfate,
       df2$linkedfate_yes)
 
+
 df2$linkedfate_how_num <- as.numeric(df2$linkedfate_howmuch) 
 df2$linkedfate_how_num <- (df2$linkedfate_how_num-3)*(-1)
 
 table(df2$linkedfate_howmuch,
       df2$linkedfate_how_num)
+
 
 df2$linkedfate_pos_num <- as.numeric(df2$linkedfate_positive) 
 
@@ -96,6 +101,7 @@ df2$linkedfate_pos_num2[df2$linkedfate_pos_num == 3] <- 0
 table(df2$linkedfate_pos_num)
 table(df2$linkedfate_pos_num2)
 
+
 df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == -1] <- "Negatively"
 df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == 1] <- "Positively"
 df2$linkedfate_pos_hist[df2$linkedfate_pos_num2 == 0] <- "Neither positive nor negative"
@@ -107,7 +113,7 @@ df2$linkedfate_pos_hist <- factor(df2$linkedfate_pos_hist,
                                   
 table(df2$linkedfate_pos_hist)
 
-                                  
+                                 
 df2$binned_relig_ethn <- ifelse(df2$C133_4<=25,1,
                               ifelse(df2$C133_4>25&df2$C133_4<=50,2,
                                    ifelse(df2$C133_4>50&df2$C133_4<=75,3,
@@ -126,12 +132,6 @@ table(df2$binned_relig_ethn_hist)
 
 
 #### DESCRIPTIVE STATISTICS ####
-
-# These include things like mean, median, mode, quartiles, min, and max
-# For categorical variables, write general summary, including histogram, 
-# talk about distribution, and anything else?
-
-# df2$identity
 
 table(df2$identity)
 summary(df2$identity_num)
@@ -171,11 +171,9 @@ table(df2$identity_hist)
 df2$identity_reg <- as.numeric(df2$identity_hist)
 
 
-# df2$express: makes sure analysis uses express_num;
-# # might want to recode the variable in its factor form too
 
-summary(df2$express)
-summary(df2$express_num)
+table(df2$express)
+table(df2$express_num)
 
 df2$express_hist[df2$express_num == 0] <- "Never"
 df2$express_hist[df2$express_num == 1] <- "Hardly ever"
@@ -183,8 +181,6 @@ df2$express_hist[df2$express_num == 2] <- "Only a few times during the year"
 df2$express_hist[df2$express_num == 3] <- "A few times a month"
 df2$express_hist[df2$express_num == 4] <- "Almost every week"
 df2$express_hist[df2$express_num == 5] <- "At least every week"
-
-
 
 df2$express_hist <- factor(df2$express_hist, 
                            levels = c("Never",
@@ -197,13 +193,10 @@ df2$express_hist <- factor(df2$express_hist,
 table(df2$express_hist)
 
 
-# df2$aapiethnicity: exclude the 1 Iranian (sorry), think about narrowing discussion >100/Top 7 groups
-# # which means creating "Other" category
 
-summary(df2$aapiethnicity)
+table(df2$aapiethnicity)
 table(df2$aapiethnicity, 
       df2$aapiethnicity_num)
-
 
 df2$aapi_hist[df2$aapiethnicity_num == 1] <- "Chinese"
 df2$aapi_hist[df2$aapiethnicity_num == 2] <- "Other"
@@ -236,7 +229,6 @@ table(df2$aapi_hist,
       df2$aapi_reg)
 
 
-# df2$relig_ethn: use binned_relig_ethn for all discussion and analysis
 
 summary(df2$relig_ethn)
 summary(df2$binned_relig_ethn)
@@ -312,14 +304,6 @@ prop.table(table(df2$identity_hist,df2$express_hist),1)*100
 # Breakdown by national origin/ethnicity and religion
 
 prop.table(table(df2$identity_hist,df2$aapi_hist),1)*100
-
-
-# Breakdown by identity and ethnic makeup of place of worship
-breakdown_table_relgn_ethwor <- df2[c("identity", "relig_ethn")] %>%
-  group_by(identity,relig_ethn) %>%
-  summarize(Freq=n())
-
-
 
 
 
@@ -537,6 +521,18 @@ identity_express_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
 
 identity_express_jitter
 
+
+express_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
+                                    aes(x = express_hist, 
+                                        y = linkedfate_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Frequency of Religious Expression", 
+       y = "Level of Linked Fate Expression", 
+       title  = "Level of Linked Fate Expression by Frequency of Religious Expression") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+express_linkedfate_jitter
 
 
 #### Basic correlations (we're going to use linear regression) ####
