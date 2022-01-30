@@ -27,7 +27,7 @@ df <- da37380.0001
 
 # Independent Variables
 
-df$identity <- df$Q10_21 # Q10_21 "What is your presnt religion, if any?" 
+df$identity <- df$Q10_21 # Q10_21 "What is your present religion, if any?" 
 df$express_ex <- df$Q10_23 # Q10_23 "How often do you attend a place of worship?" 
 df$express_in <- df$Q4_2E # Q4_2E "How important is your religion to your identity?" 
 df$aapiethnicity <- df$S10_1 # S10_1 "Do you consider any part of your background to be Asian or Asian-American, such as Chinese, Filipino, Indian, or Pacific Islander like Native Hawaiian or Samoan?" 
@@ -60,7 +60,9 @@ table(df2$linkedfate_share)
 
 #### RECODE SO NO FACTOR VARIABLES + DESCRIPTIVE STATS CODE ####
 
-# # 01/26/2022: FIGURE OUT HOW TO WINNOW DOWN CATEGORIES - IDENTITY AND AAPIETHNICITY
+# # 01/29/2022: MAKE CATEGORIES MATCH CMPS
+
+# IV: Religious Identity
 
 df2$identity_num <- as.numeric(df2$identity) 
 
@@ -68,6 +70,62 @@ table(df2$identity_num)         # table() function checks that new coding is cor
 table(df2$identity,          
       df2$identity_num)
 
+df2$identity_hist[df2$identity == "(01) Agnostic"] <- "Atheist or agnostic"
+df2$identity_hist[df2$identity == "(02) Atheist"] <- "Atheist or agnostic"
+df2$identity_hist[df2$identity == "(03) Baptist"] <- "Other"
+df2$identity_hist[df2$identity == "(04) Buddhist"] <- "Buddhist"
+df2$identity_hist[df2$identity == "(05) Catholic"] <- "Catholic"
+df2$identity_hist[df2$identity == "(06) Christian"] <- "Christian"
+df2$identity_hist[df2$identity == "(07) Christian Scientists"] <- "Other"
+df2$identity_hist[df2$identity == "(08) Church of God in Christ"] <- "Other"
+df2$identity_hist[df2$identity == "(09) Church of the Nazarene"] <- "Other"
+df2$identity_hist[df2$identity == "(10) Congregationalist (includes United Church of Christ)"] <- "Other"
+df2$identity_hist[df2$identity == "(11) Disciples of Christ, Churches of Christ"] <- "Other"
+df2$identity_hist[df2$identity == "(12) Episcopalian, Anglican"] <- "Other"
+df2$identity_hist[df2$identity == "(13) Falun Gong"] <- "Other"
+df2$identity_hist[df2$identity == "(14) Greek Orthodox"] <- "Other"
+df2$identity_hist[df2$identity == "(15) Hindu"] <- "Hindu"
+df2$identity_hist[df2$identity == "(16) Jain"] <- "Other"
+df2$identity_hist[df2$identity == "(17) Jehovah's Witnesses"] <- "Other"
+df2$identity_hist[df2$identity == "(18) Jewish"] <- "Other"
+df2$identity_hist[df2$identity == "(19) Lutheran"] <- "Other"
+df2$identity_hist[df2$identity == "(20) Methodist"] <- "Other"
+df2$identity_hist[df2$identity == "(21) Mormon, Church of the Latter Day Saints"] <- "Other"
+df2$identity_hist[df2$identity == "(22) Muslim, Mohammedan, Islam"] <- "Muslim"
+df2$identity_hist[df2$identity == "(23) Orthodox, Eastern Orthodox"] <- "Other"
+df2$identity_hist[df2$identity == "(24) Pentecostal"] <- "Other"
+df2$identity_hist[df2$identity == "(25) Presbyterian"] <- "Other"
+df2$identity_hist[df2$identity == "(26) Protestant (no denomination given)"] <- "Protestant"
+df2$identity_hist[df2$identity == "(27) Reformed, Dutch Reformed, Christian Reformed"] <- "Other"
+df2$identity_hist[df2$identity == "(28) Seventh Day Adventist"] <- "Other"
+df2$identity_hist[df2$identity == "(29) Sikh"] <- "Other"
+df2$identity_hist[df2$identity == "(30) Unitarian, Universalist"] <- "Other"
+df2$identity_hist[df2$identity == "(31) Other Non-Christian"] <- "Other"
+df2$identity_hist[df2$identity == "(32) African Methodist Episcopal/AME"] <- "Other"
+df2$identity_hist[df2$identity == "(77) No religion"] <- "None"
+df2$identity_hist[df2$identity == "(78) Spiritual, but not religious"] <- "Other"
+
+
+df2$identity_hist <- factor(df2$identity_hist,
+                            levels = c("Catholic",
+                                       "Protestant",
+                                       "Christian",
+                                       "Muslim",
+                                       "Hindu",
+                                       "Buddhist",
+                                       "Atheist or agnostic",
+                                       "Other",
+                                       "None"))
+
+table(df2$identity_hist)
+
+df2$identity_reg <- as.numeric(df2$identity_hist)
+
+table(df2$identity_hist,
+      df2$identity_reg)
+
+
+# IV: Religious Expression - External/Frequency
 
 df2$express_ex_num <- as.numeric(df2$express_ex)
 df2$express_ex_num <- (df2$express_ex_num-6)*(-1)
@@ -96,6 +154,8 @@ table(df2$express_ex_hist,
       df2$express_ex_num)
 
 
+# IV: Religious Expression - Internal/Importance
+
 table(df2$express_in)
 
 df2$express_in_num <- as.numeric(df2$express_in)
@@ -121,13 +181,45 @@ table(df2$express_in_hist,
       df2$express_in_num)
 
 
+# Interaction: Ethnicity
+
 df2$aapiethnicity_num <- as.numeric(df2$aapiethnicity)
 
 table(df2$aapiethnicity_num)
 table(df2$aapiethnicity,
       df2$aapiethnicity_num)
 
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 2] <- "Other"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 3] <- "Other"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 4] <- "Chinese"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 5] <- "Filipino"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 6] <- "Other"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 7] <- "Indian"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 8] <- "Japanese"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 9] <- "Korean"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 11] <- "Other"
+df2$aapiethnicity_hist[df2$aapiethnicity_num == 12] <- "Vietnamese"
 
+df2$aapiethnicity_hist <- factor(df2$aapiethnicity_hist,
+                              levels = c("Chinese",
+                                         "Indian",
+                                         "Korean",
+                                         "Filipino",
+                                         "Vietnamese",
+                                         "Japanese",
+                                         "Other"))
+
+table(df2$aapiethnicity_hist)
+table(df2$aapiethnicity_num,
+      df2$aapiethnicity_hist)
+
+df2$aapiethnicity_reg <- as.numeric(df2$aapiethnicity_hist)
+
+table(df2$aapiethnicity_hist,
+      df2$aapiethnicity_reg)
+
+
+# DV: Racial Linked Fate
 
 df2$linkedfate_race_yes <- ifelse(df2$linkedfate_race == "(1) Yes", 1, 0)
 
@@ -136,32 +228,89 @@ table(df2$linkedfate_race,
       df2$linkedfate_race_yes)
 
 
-df2$linkedfate_race_how_num <- as.numeric(df2$linkedfate_race_howmuch) 
+df2$linkedfate_race_how_num <- as.numeric(df2$linkedfate_race_howmuch)
+df2$linkedfate_race_how_num <- (df2$linkedfate_race_how_num-3)*(-1)
 
 table(df2$linkedfate_race_how_num)
 table(df2$linkedfate_race_howmuch,
       df2$linkedfate_race_how_num)
 
+df2$linkedfate_race_hist[df2$linkedfate_race == "(2) No"] <- "No"
+df2$linkedfate_race_hist[df2$linkedfate_race_howmuch == "(3) Not very much"] <- "Not very much"
+df2$linkedfate_race_hist[df2$linkedfate_race_howmuch == "(2) Some"] <- "Some"
+df2$linkedfate_race_hist[df2$linkedfate_race_howmuch == "(1) A lot"] <- "A lot"
+
+df2$linkedfate_race_hist <- factor(df2$linkedfate_race_hist,
+                                   levels = c("No",
+                                              "Not very much",
+                                              "Some",
+                                              "A lot"))
+  
+table(df2$linkedfate_race_hist)
+
+df2$linkedfate_race_reg[df2$linkedfate_race == "(2) No"] <- 0
+df2$linkedfate_race_reg[df2$linkedfate_race_howmuch == "(3) Not very much"] <- 1
+df2$linkedfate_race_reg[df2$linkedfate_race_howmuch == "(2) Some"] <- 2
+df2$linkedfate_race_reg[df2$linkedfate_race_howmuch == "(1) A lot"] <- 3
+
+table(df2$linkedfate_race_reg)
+
+table(df2$linkedfate_race_hist,
+      df2$linkedfate_race_reg)
+
+
+# DV: Ethnic Linked Fate
 
 df2$linkedfate_ethn_yes <- ifelse(df2$linkedfate_ethn == "(1) Yes", 1, 0)
 
-table(linkedfate_ethn_yes)
 table(df2$linkedfate_ethn,
       df2$linkedfate_ethn_yes)
 
-
-df2$linkedfate_ethn_how_num <- as.numeric(df2$linkedfate_ethn_howmuch) 
+df2$linkedfate_ethn_how_num <- as.numeric(df2$linkedfate_ethn_howmuch)
+df2$linkedfate_ethn_how_num <- (df2$linkedfate_ethn_how_num-3)*(-1)
 
 table(df2$linkedfate_ethn_how_num)
 table(df2$linkedfate_ethn_howmuch,
       df2$linkedfate_ethn_how_num)
 
+df2$linkedfate_ethn_hist[df2$linkedfate_ethn == "(2) No"] <- "No"
+df2$linkedfate_ethn_hist[df2$linkedfate_ethn_howmuch == "(3) Not very much"] <- "Not very much"
+df2$linkedfate_ethn_hist[df2$linkedfate_ethn_howmuch == "(2) Some"] <- "Some"
+df2$linkedfate_ethn_hist[df2$linkedfate_ethn_howmuch == "(1) A lot"] <- "A lot"
+
+df2$linkedfate_ethn_hist <- factor(df2$linkedfate_ethn_hist,
+                                   levels = c("No",
+                                              "Not very much",
+                                              "Some",
+                                              "A lot"))
+
+table(df2$linkedfate_ethn_hist)
+
+df2$linkedfate_ethn_reg[df2$linkedfate_ethn == "(2) No"] <- 0
+df2$linkedfate_ethn_reg[df2$linkedfate_ethn_howmuch == "(3) Not very much"] <- 1
+df2$linkedfate_ethn_reg[df2$linkedfate_ethn_howmuch == "(2) Some"] <- 2
+df2$linkedfate_ethn_reg[df2$linkedfate_ethn_howmuch == "(1) A lot"] <- 3
+
+table(df2$linkedfate_ethn_reg)
+
+table(df2$linkedfate_ethn_hist,
+      df2$linkedfate_ethn_reg)
+
+
+# DV: Commmon race
 
 df2$linkedfate_share_num <- ifelse(df2$linkedfate_share == "(1) Yes", 1, 0)
 
 table(df2$linkedfate_share_num)
 table(df2$linkedfate_share_num,
       df2$linkedfate_share)
+
+df2$linkedfate_share_hist[df2$linkedfate_share == "(1) Yes"] <- "Yes"
+df2$linkedfate_share_hist[df2$linkedfate_share == "(2) No"] <- "No"
+
+table(df2$linkedfate_share_hist)
+table(df2$linkedfate_share_num,
+      df2$linkedfate_share_hist)
 
 
 
@@ -170,15 +319,140 @@ table(df2$linkedfate_share_num,
 
 # Use to figure out interesting jitters
 
-# # prop.table(table(df$var1, df$var2),1/2)*100
+# # prop.table(table(df$var1, df$var2),1)*100
 
 
 
 
 #### HISTORGRAMS AND BARCHARTS ####
 
+# Religious identity barplot - Univariate
+
+identity_bar <- ggplot(data=subset(df2, !is.na(identity_hist)),
+                       aes(x = identity_hist, 
+                           y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.75) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "What is your present religion, if any?",
+       fill = "Religious identity") +
+  scale_y_continuous(labels = scales::percent) + 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+identity_bar
 
 
+# External expression - Univariate
+
+express_ex_bar <- ggplot(data=subset (df2, !is.na(express_ex_hist)),
+                      aes(x = express_ex_hist, 
+                          y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.6) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "How often do you attend a place of worship?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+express_ex_bar
+
+
+# Internal expression - Univariate
+
+express_in_bar <- ggplot(data=subset (df2, !is.na(express_in_hist)),
+                         aes(x = express_in_hist, 
+                             y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.6) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "How important is your religion to your identity?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+express_in_bar
+
+
+# Ethnicity - Univariate
+
+aapiethnicity_bar <- ggplot(df2, 
+                   aes(x = aapiethnicity_hist, 
+                       y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.65) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "Do you consider any part of your background to be Asian or Asian-American, such as Chinese, Filipino, or Indian?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+aapiethnicity_bar
+
+# # kind of a ridiculous distribution...
+
+
+# Racial Linked Fate - Univariate
+
+linkedfate_race_bar <- ggplot(data=subset (df2, !is.na(linkedfate_race_hist)),
+                              aes(x = linkedfate_race_hist, 
+                                  y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.5) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "Do you think what happens generally to other [RACES] in this country affects what happens in your life?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+linkedfate_race_bar
+
+
+# Ethnic Linked Fate - Univariate
+
+linkedfate_ethn_bar <- ggplot(data=subset (df2, !is.na(linkedfate_ethn_hist)),
+                              aes(x = linkedfate_ethn_hist, 
+                                  y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.6) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "Do you think what happens generally to other [RETHNIC] Americans affects what happens in your life?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+linkedfate_ethn_bar
+
+
+# Common race - Univariate
+
+linkedfate_share_bar <- ggplot(data=subset (df2, !is.na(linkedfate_share_hist)),
+                              aes(x = linkedfate_share_hist, 
+                                  y = ..count.. / sum(..count..))) + 
+  geom_bar(fill = 'steelblue',
+           color = 'black',
+           width = 0.5) +
+  labs(x = "", 
+       y = "Percent", 
+       title  = "What, if anything do [INSRACES] in the United States share with one another? Would you say they share...A common race?") +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+linkedfate_share_bar
 
 
 #### JITTER PLOTS ####

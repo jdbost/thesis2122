@@ -11,6 +11,8 @@ setwd("C:/Users/avata/OneDrive/Desktop/R/thesis2122")
 # load libraries
 
 library(tidyverse)
+library(ggplot2)
+
 
 # load data
 
@@ -54,11 +56,15 @@ table(df2$linkedfate_positive) # factor
 
 ## RECODE SO NO FACTOR VARIABLES ##
 
+# IV: Religious Identity
+
 df2$identity_num <- as.numeric(df2$identity)
 
 table(df2$identity,          # table() function checks that new coding is correct!
       df2$identity_num)
 
+
+# IV: Religious Expression - External/Frequency
 
 df2$express_num <- as.numeric(df2$express)
 df2$express_num <- (df2$express_num-6)*(-1)
@@ -67,11 +73,32 @@ table(df2$express,
       df2$express_num)
 
 
+# Interaction: Ethnicity
+
 df2$aapiethnicity_num <- as.numeric(df2$aapiethnicity)
 
 table(df2$aapiethnicity,
       df2$aapiethnicity_num)
 
+
+# Interaction: Racial/Ethnic Composition of Place of Worship      
+
+df2$binned_relig_ethn <- ifelse(df2$C133_4<=25,1,
+                                ifelse(df2$C133_4>25&df2$C133_4<=50,2,
+                                       ifelse(df2$C133_4>50&df2$C133_4<=75,3,
+                                              ifelse(df2$C133_4>75&df2$C133_4<=100,4,NA))))
+
+table(df2$binned_relig_ethn)
+
+df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 1] <- "0-25%"
+df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 2] <- "26-50%"
+df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 3] <- "51-75%"
+df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 4] <- "76-100%"
+
+table(df2$binned_relig_ethn_hist)
+
+
+# DV: Linked Fate
 
 df2$linkedfate_yes <- ifelse(df2$linkedfate=="(1) Yes", 1, 0)
 
@@ -113,20 +140,6 @@ df2$linkedfate_pos_hist <- factor(df2$linkedfate_pos_hist,
                                   
 table(df2$linkedfate_pos_hist)
 
-                                 
-df2$binned_relig_ethn <- ifelse(df2$C133_4<=25,1,
-                              ifelse(df2$C133_4>25&df2$C133_4<=50,2,
-                                   ifelse(df2$C133_4>50&df2$C133_4<=75,3,
-                                        ifelse(df2$C133_4>75&df2$C133_4<=100,4,NA))))
-
-table(df2$binned_relig_ethn)
-
-df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 1] <- "0-25%"
-df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 2] <- "26-50%"
-df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 3] <- "51-75%"
-df2$binned_relig_ethn_hist[df2$binned_relig_ethn == 4] <- "76-100%"
-
-table(df2$binned_relig_ethn_hist)
 
 
 
@@ -136,12 +149,6 @@ table(df2$binned_relig_ethn_hist)
 table(df2$identity)
 summary(df2$identity_num)
 table(df2$identity_num)
-
-df2$identity_reg <- droplevels.factor(df2$identity, exclude = "(8) Other:(SPECIFY)") %>%
-                    as.numeric()
-
-table(df2$identity_reg,
-      df2$identity_num)
 
 
 df2$identity_hist[df2$identity == "(1) Catholic"] <- "Catholic"
@@ -192,6 +199,10 @@ df2$express_hist <- factor(df2$express_hist,
 
 table(df2$express_hist)
 
+df2$express_reg <- as.numeric(df2$express_hist)
+
+table(df2$express_hist,
+      df2$express_reg)
 
 
 table(df2$aapiethnicity)
@@ -309,11 +320,10 @@ prop.table(table(df2$identity_hist,df2$aapi_hist),1)*100
 
 #### HISTOGRAMS/BARPLOTS ####
 
-library(ggplot2)
-
 # Center title: https://stackoverflow.com/questions/40675778/center-plot-title-in-ggplot2
 
 theme(plot.title = element_text(hjust = 0.5))
+
 
 # Linkedfate histogram/barplot - Univariate
 
@@ -357,7 +367,7 @@ identity_bar
 
 # Racial composition of local religious community histogram - Bivariate
 
-binned_relig_ethn_bar <- ggplot(data=subset (df2, !is.na(binned_relig_ethn_hist)),
+binned_relig_ethn_bar <- ggplot(data=subset(df2, !is.na(binned_relig_ethn_hist)),
                                 aes(x = binned_relig_ethn_hist,
                                     y = ..count.. / sum(..count..))) + 
   geom_bar(fill = 'steelblue',
@@ -479,20 +489,20 @@ identity_aapi_stackbar
 
 # Example code from Minnie
 
-plot(jitter(yourdata$xvariable, factor=2), jitter(yourdata$yvariable, factor=2),
-     main="your title",
-     col="cornflowerblue",
-     pch=20,
-     xlab = ("x label"),
-     ylab=("y label"))
+# plot(jitter(yourdata$xvariable, factor=2), jitter(yourdata$yvariable, factor=2),
+#      main="your title",
+#      col="cornflowerblue",
+#      pch=20,
+#      xlab = ("x label"),
+#      ylab=("y label"))
 
 
-plot(jitter(df2$identity_reg, factor=2), jitter(df2$aapi_reg, factor=2),
-     main="your title",
-     col="cornflowerblue",
-     pch=20,
-     xlab = ("x label"),
-     ylab=("y label"))
+# plot(jitter(df2$identity_reg, factor=2), jitter(df2$aapi_reg, factor=2),
+#      main="your title",
+#      col="cornflowerblue",
+#      pch=20,
+#      xlab = ("x label"),
+#      ylab=("y label"))
 
 # ggplot2 version
 
@@ -535,9 +545,79 @@ express_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
 express_linkedfate_jitter
 
 
+
+#### CORRELATION PLOT - hELP Pls ####
+
+# http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
+
+library(ggcorrplot)
+
+# Compute a correlation matrix
+
+identity_linkedfate_corr <- round(cor(df2$identity_reg,df2$linkedfate_reg),2)
+
+identity_linkedfate_corr
+
+head(identity_aapi_corr)
+
+# Compute a matrix of correlation p-values
+
+identity_aapi_corrmat <- cor_pmat(identity_aapi_corr)
+
+# Visualize the correlation matrix
+
+# method = "square" (default)
+
+ggcorrplot(identity_aapi_corr)
+
+
+
+
 #### Basic correlations (we're going to use linear regression) ####
 
 summary(lm(data=df2, linkedfate_yes~express_num))
+
+# Output:
+# Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 0.596940   0.015576  38.324  < 2e-16 ***
+# express_num 0.015219   0.005611   2.712  0.00673 ** 
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.4824 on 2368 degrees of freedom
+#  (636 observations deleted due to missingness)
+# Multiple R-squared:  0.003097,	Adjusted R-squared:  0.002676 
+# F-statistic: 7.356 on 1 and 2368 DF,  p-value: 0.006731
+
+
+summary(lm(data=df2, linkedfate_yes~aapiethnicity))
+
+# Output:
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                       0.6468130  0.0157052  41.185  < 2e-16 ***
+# aapiethnicity(02) Taiwanese       0.0311531  0.0474031   0.657  0.51110    
+# aapiethnicity(03) Indian         -0.0898771  0.0271176  -3.314  0.00093 ***
+# aapiethnicity(04) Korean         -0.0543959  0.0369508  -1.472  0.14109    
+# aapiethnicity(05) Filipino       -0.0273008  0.0286771  -0.952  0.34117    
+# aapiethnicity(06) Vietnamese     -0.0175447  0.0373912  -0.469  0.63895    
+# aapiethnicity(07) Japanese       -0.0435072  0.0299486  -1.453  0.14640    
+# aapiethnicity(08) Pakistani      -0.0570694  0.0793671  -0.719  0.47216    
+# aapiethnicity(09) Thai           -0.1603265  0.0814021  -1.970  0.04898 *  
+# aapiethnicity(10) Iranian        -0.6468130  0.4861003  -1.331  0.18342    
+# aapiethnicity(11) Bangladeshi    -0.1731287  0.1125619  -1.538  0.12414    
+# aapiethnicity(12) Laotian         0.0804598  0.0860209   0.935  0.34968    
+# aapiethnicity(13) Cambodian      -0.1762247  0.0847892  -2.078  0.03776 *  
+# aapiethnicity(14) Other: SPECIFY -0.0009796  0.0520142  -0.019  0.98497    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+# Residual standard error: 0.4858 on 2992 degrees of freedom
+# Multiple R-squared:  0.008258,	Adjusted R-squared:  0.003949 
+# F-statistic: 1.917 on 13 and 2992 DF,  p-value: 0.0241
+
+
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~express_num)) # This is a subsetting regression
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~express_num))
 summary(lm(data=df2, linkedfate_yes~identity_hist))
