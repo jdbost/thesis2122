@@ -142,8 +142,6 @@ table(df2$linkedfate_pos_hist)
 
 
 
-
-
 #### DESCRIPTIVE STATISTICS ####
 
 table(df2$identity)
@@ -286,16 +284,7 @@ table(df2$linkedfate_hist)
 
 #### BREAKDOWN TABLES ####
 
-# Spencer's example - Proportion/percent table
-
-# # table <- table(df2$linkedfate_reg)
-# # prop.table(table)*100
-
-# Breakdown by identity and express
-
-# # Spencer's example - Proportion/percent table
-
-# # Also from Dr. B - https://www.statmethods.net/stats/frequencies.html
+# # From Dr. B - https://www.statmethods.net/stats/frequencies.html
 
 # # prop.table(your_table, 1)
 # # prop.table(your_table, 2)
@@ -309,12 +298,21 @@ table(df2$linkedfate_hist)
 # # prop.table(your_table)
 # # prop.table(table(df$var1, df$var2))
 
+# Breakdown by identity and express
+
 prop.table(table(df2$identity_hist,df2$express_hist),1)*100
 
 
 # Breakdown by national origin/ethnicity and religion
 
 prop.table(table(df2$identity_hist,df2$aapi_hist),1)*100
+
+
+# Breakdown by frequency of religious service attendance and linked fate
+
+prop.table(table(df2$express_hist,df2$linkedfate_yes),1)*100
+
+prop.table(table(df2$express_hist,df2$linkedfate_hist),1)*100
 
 
 
@@ -532,6 +530,19 @@ identity_express_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
 identity_express_jitter
 
 
+identity_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(identity_hist)),
+                                    aes(x = identity_hist, 
+                                        y = linkedfate_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Religious Identity", 
+       y = "Level of Linked Fate Expression", 
+       title  = "Level of Linked Fate Expression by Religious Identity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+identity_linkedfate_jitter
+
+
 express_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
                                     aes(x = express_hist, 
                                         y = linkedfate_hist)) + 
@@ -546,30 +557,51 @@ express_linkedfate_jitter
 
 
 
-#### CORRELATION PLOT - hELP Pls ####
+#### CORRELATION PLOT ####
 
 # http://www.sthda.com/english/wiki/ggcorrplot-visualization-of-a-correlation-matrix-using-ggplot2
 
 library(ggcorrplot)
 
+# try to make a matrix w/numeric variables
+
+df2_mat <- df2[c("identity_reg", "express_reg", "aapi_reg", "binned_relig_ethn", "linkedfate_reg")] %>%
+  group_by(identity_reg,express_reg,aapi_reg,binned_relig_ethn,linkedfate_reg)
+
+df2_mat <- df2[c("express_reg", "linkedfate_reg")] %>%
+  group_by(express_reg,linkedfate_reg)
+
+df2_mat
+
 # Compute a correlation matrix
 
-identity_linkedfate_corr <- round(cor(df2$identity_reg,df2$linkedfate_reg),2)
+corr_mat <- round(cor(df2_mat, use = "complete.obs"), 2)
 
-identity_linkedfate_corr
+corr_mat
 
-head(identity_aapi_corr)
+head(corr_mat)
 
 # Compute a matrix of correlation p-values
 
-identity_aapi_corrmat <- cor_pmat(identity_aapi_corr)
+corr_mat_p <- cor_pmat(corr_mat)
+
+corr_mat_p
 
 # Visualize the correlation matrix
 
-# method = "square" (default)
+ggcorrplot(corr_mat,
+           hc.order = TRUE,                               # Using hierarchical clustering
+           type = "lower",                                # Get the lower triangle
+           insig = "blank",                               # Leave blank on no significant coefficient
+           lab = TRUE,                                    # Add correlation coefficients
+           ggtheme = ggplot2::theme_minimal,
+           colors = c("#6D9EC1", "white", "#E46726")) +
+  labs(title  = "Correlation Heatmap") +
+  theme(plot.title = element_text(hjust = 0.5))
 
-ggcorrplot(identity_aapi_corr)
+# change x and y labels? 
 
+# What does this graph communicate that the jitterplot doesn't?
 
 
 
@@ -634,4 +666,3 @@ summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identit
 ## people (1 Iranian???)
 ## 4 - mapping relationships using linear regression. Decide which regressions to 
 ## run, with an eye to answering your first two research questions. 
-

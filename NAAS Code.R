@@ -315,7 +315,7 @@ table(df2$linkedfate_share_num,
 
 
 
-##### BREAKDOWN TABLES ####
+#### BREAKDOWN TABLES ####
 
 # Use to figure out interesting jitters
 
@@ -459,3 +459,9 @@ linkedfate_share_bar
 
 
 
+#### CORRELATIONS - LINEAR REGRESSION ####
+
+summary(lm(data=df2, linkedfate_race_yes~express_ex_num))
+summary(lm(data=df2, linkedfate_race_yes~express_in_num))
+summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
+summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
