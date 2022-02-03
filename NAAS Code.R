@@ -105,7 +105,6 @@ df2$identity_hist[df2$identity == "(32) African Methodist Episcopal/AME"] <- "Ot
 df2$identity_hist[df2$identity == "(77) No religion"] <- "None"
 df2$identity_hist[df2$identity == "(78) Spiritual, but not religious"] <- "Other"
 
-
 df2$identity_hist <- factor(df2$identity_hist,
                             levels = c("Catholic",
                                        "Protestant",
@@ -245,7 +244,7 @@ df2$linkedfate_race_hist <- factor(df2$linkedfate_race_hist,
                                               "Not very much",
                                               "Some",
                                               "A lot"))
-  
+
 table(df2$linkedfate_race_hist)
 
 df2$linkedfate_race_reg[df2$linkedfate_race == "(2) No"] <- 0
@@ -457,11 +456,76 @@ linkedfate_share_bar
 
 #### JITTER PLOTS ####
 
+identity_express_ex_jitter <- ggplot(data=subset (df2, !is.na(express_ex_hist)),
+                                     aes(x = identity_hist, 
+                                         y = express_ex_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Religious Identity", 
+       y = "Frequency of Religious Expression", 
+       title  = "Level of Religious Expression by Religious Identity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+identity_express_ex_jitter
+
+
+identity_express_in_jitter <- ggplot(data=subset (df2, !is.na(express_in_hist)),
+                                     aes(x = identity_hist, 
+                                         y = express_in_hist)) + 
+  geom_jitter(color = "steelblue") +
+  labs(x = "Religious Identity", 
+       y = "Importance of Religious Expression", 
+       title  = "Level of Religious Expression by Religious Identity") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+identity_express_in_jitter
+
+#### CORRELATION PLOT ####
+
+library(ggcorrplot)
+
+# try to make a matrix w/numeric variables
+
+df2_mat <- df2[c("identity_reg", "express_ex_num", "express_in_num", "aapiethnicity_reg", "linkedfate_race_yes","linkedfate_share_num")] %>%
+  group_by(identity_reg,express_ex_num,express_in_num,aapiethnicity_reg,linkedfate_race_yes,linkedfate_share_num)
+
+# df2_mat <- df2[c("express_reg", "linkedfate_reg")] %>%
+#   group_by(express_reg,linkedfate_reg)
+
+df2_mat
+
+# Compute a correlation matrix
+
+corr_mat <- round(cor(df2_mat, use = "complete.obs"), 2)
+
+corr_mat
+
+head(corr_mat)
+
+# Compute a matrix of correlation p-values
+
+corr_mat_p <- cor_pmat(corr_mat)
+
+corr_mat_p
+
+# Visualize the correlation matrix
+
+ggcorrplot(corr_mat, 
+           hc.order = TRUE,                               # Using hierarchical clustering
+           type = "lower",                                # Get the lower triangle
+           insig = "blank",                               # Leave blank on no significant coefficient
+           lab = TRUE,                                    # Add correlation coefficients
+           ggtheme = ggplot2::theme_minimal,
+           colors = c("#6D9EC1", "white", "#E46726")) +
+  labs(title  = "Correlation Heatmap") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 #### CORRELATIONS - LINEAR REGRESSION ####
 
-summary(lm(data=df2, linkedfate_race_yes~express_ex_num))
+summary(lm(data=df2, express_ex_num~express_in_num))
 summary(lm(data=df2, linkedfate_race_yes~express_in_num))
+summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
