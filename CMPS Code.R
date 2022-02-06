@@ -607,6 +607,13 @@ ggcorrplot(corr_mat,
 
 #### Basic correlations (we're going to use linear regression) ####
 
+# NOTES FROM DR.B
+# summary(lm(data=df, y~x1+x2)) # basic regression
+# summary(lm(data=df,y~x1*x2)) # interaction regression = summary(lm(data=df,y~x1+x2+x1*x2))
+# x1+x2 == x1=1 and x2=1, intercept when x1=x2=0
+# x1*x2 = x1+x2+x1*x2 == x1=1 while x2=0, x2=1 while x1=0, and both x1=x2=1, and intercept when x1=0 and x2=0
+# use subsetting >> interaction for categorical variables -- calculates slope for category
+
 # H1: Religious Asian Americans belonging to Catholic or Christian traditions 
 # will likely express lower levels of panethnic linked fate than religious Asian Americans 
 # belonging to a non-Christian religion, such as Buddhism or Hinduism.
@@ -629,13 +636,19 @@ summary(lm(data=df2, linkedfate_yes~identity))
 # Multiple R-squared:  0.00995,	Adjusted R-squared:  0.007307 
 # F-statistic: 3.765 on 8 and 2997 DF,  p-value: 0.0002114
 
-# How does this vary across ethnicity?
+# H1 ANSWER: no real difference between "Christian" (Catholic, Protestant, Christian) 
+## and non-Christian religions (except maybe for Hindus) 
+## Significant results for Atheist/agnostic group and None group, perhaps
+## suggesting some key ideological/???? difference in beliefs between the two groups maybe?
+## or at the very least that it's not appropriate to group them together.
+
+# NOTE: How does this vary across ethnicity?
 
 summary(lm(data=df2, linkedfate_yes~identity*aapi_hist)) # Interaction: identity DEPENDS ON ethnicity
 
 # Coefficients: (5 not defined because of singularities)
 #                                                       Estimate Std. Error t value Pr(>|t|)    
-# Intercept = Catholics + "Never"                      0.5975610  0.0535216  11.165  < 2e-16 ***
+# Intercept = Catholics?                               0.5975610  0.0535216  11.165  < 2e-16 ***
 # identity(2) Protestant                               0.1421651  0.0779890   1.823  0.06842 .  
 # identity(3) Christian                                0.0346229  0.0649194   0.533  0.59385    
 # identity(4) Muslim                                   0.1524390  0.2481695   0.614  0.53910    
@@ -701,30 +714,30 @@ summary(lm(data=df2, linkedfate_yes~identity*aapi_hist)) # Interaction: identity
 # Multiple R-squared:  0.02761,	Adjusted R-squared:  0.008814 
 # F-statistic: 1.469 on 57 and 2948 DF,  p-value: 0.01308
 
-summary(lm(data=df2, linkedfate_yes~identity+aapi_hist)) # Control: look at variation of identity as ethnicity stays the same
+# NOTE: only significance for:
+# Protestant Indian
+# Christian Indian
+# Buddhist Indian
+# None Indian
+# SO subset among Indians:
+
+summary(lm(data=df2[df2$aapiethnicity=="(03) Indian",], linkedfate_yes~identity)) # This is a subsetting regression
 
 # Coefficients:
-#                                  Estimate Std. Error t value Pr(>|t|)    
-# Intercept = Catholics + Chinese  0.651054   0.030282  21.500   <2e-16 ***
-# identity(2) Protestant           0.015605   0.047210   0.331   0.7410    
-# identity(3) Christian           -0.006078   0.032399  -0.188   0.8512    
-# identity(4) Muslim              -0.007153   0.067014  -0.107   0.9150    
-# identity(5) Hindu               -0.003552   0.049552  -0.072   0.9429    
-# identity(6) Buddhist             0.052285   0.038444   1.360   0.1739    
-# identity(7) Atheist or agnostic  0.062981   0.035140   1.792   0.0732 .  
-# identity(8) Other:(SPECIFY)      0.024071   0.063036   0.382   0.7026    
-# identity(9) None                -0.078485   0.033740  -2.326   0.0201 *  
-# aapi_histIndian                 -0.093170   0.040311  -2.311   0.0209 *  
-# aapi_histKorean                 -0.059418   0.037701  -1.576   0.1151    
-# aapi_histFilipino               -0.030667   0.032622  -0.940   0.3473    
-# aapi_histVietnamese             -0.029744   0.038360  -0.775   0.4382    
-# aapi_histJapanese               -0.054188   0.030237  -1.792   0.0732 .  
-# aapi_histOther                  -0.036912   0.030910  -1.194   0.2325    
+#                                 Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                      0.72000    0.09895   7.276 1.43e-12 ***
+# identity(2) Protestant          -0.43429    0.21157  -2.053  0.04065 *  
+# identity(3) Christian           -0.23852    0.13733  -1.737  0.08306 .  
+# identity(4) Muslim              -0.10889    0.15294  -0.712  0.47684    
+# identity(5) Hindu               -0.14857    0.10272  -1.446  0.14875    
+# identity(6) Buddhist            -0.47000    0.26644  -1.764  0.07838 .  
+# identity(7) Atheist or agnostic -0.10889    0.12881  -0.845  0.39834    
+# identity(8) Other:(SPECIFY)     -0.22000    0.15294  -1.438  0.15097    
+# identity(9) None                -0.37385    0.13859  -2.697  0.00724 **
 
-# Residual standard error: 0.4849 on 2991 degrees of freedom
-# Multiple R-squared:  0.01261,	Adjusted R-squared:  0.007989 
-# F-statistic: 2.729 on 14 and 2991 DF,  p-value: 0.0005132
+# NOTE: The effect in None is exaggerated within the Indian subset -- same with Indian Catholics
 
+# H1 ANSWER pt. 2: When interacting identity and ethnicity, 
 
 # H2a: Asian Americans with higher levels of external religious expression 
 # (or the frequency measure) will be less likely to express higher levels of 
@@ -733,20 +746,19 @@ summary(lm(data=df2, linkedfate_yes~identity+aapi_hist)) # Control: look at vari
 summary(lm(data=df2, linkedfate_yes~express_num))
 
 # Coefficients:
-#             Estimate Std. Error t value Pr(>|t|)    
-# (Intercept) 0.596940   0.015576  38.324  < 2e-16 ***
-# Intercept = "Never"
-# express_num 0.015219   0.005611   2.712  0.00673 ** 
+#                       Estimate Std. Error t value Pr(>|t|)    
+# Intercept = "Never"   0.596940   0.015576  38.324  < 2e-16 ***
+# express_num           0.015219   0.005611   2.712  0.00673 ** 
 
 # Residual standard error: 0.4824 on 2368 degrees of freedom
 #  (636 observations deleted due to missingness)
 # Multiple R-squared:  0.003097,	Adjusted R-squared:  0.002676 
 # F-statistic: 7.356 on 1 and 2368 DF,  p-value: 0.006731
 
-## Generally, people who are "more religious" (i.e. attend more religious services),
-## are more likely to express linked fate -- to answer "Yes"
-### Although, notably, baseline (i.e. non-religious people) likelihood of expressing linked fate is pretty high
-### -- about 60%!
+# H2a ANSWER: Generally, people who are "more religious" (i.e. attend more religious services),
+# are more likely to express linked fate -- to answer "Yes"
+## Although, notably, baseline (i.e. non-religious people) likelihood of expressing linked fate
+## is pretty high -- about 60%!
 
 # How does this vary by religion?
 
@@ -774,25 +786,11 @@ summary(lm(data=df2, linkedfate_yes~express_num*identity))
 # Multiple R-squared:  0.02382,	Adjusted R-squared:  0.01843 
 # F-statistic: 4.422 on 13 and 2356 DF,  p-value: 1.849e-07
 
-summary(lm(data=df2, linkedfate_yes~express_num+identity))
+summary(lm(data=df2, linkedfate_yes~express_num*aapi_hist))
 
-# Coefficients:
-#                                  Estimate Std. Error t value Pr(>|t|)    
-# Intercept = Catholics + "Never"  0.521124   0.028619  18.209  < 2e-16 ***
-# express_num                      0.035442   0.006668   5.315 1.16e-07 ***
-# identity(2) Protestant           0.012631   0.044229   0.286  0.77522    
-# identity(3) Christian           -0.015106   0.029901  -0.505  0.61348    
-# identity(4) Muslim              -0.024515   0.061647  -0.398  0.69090    
-# identity(5) Hindu               -0.045099   0.033927  -1.329  0.18389    
-# identity(6) Buddhist             0.103765   0.035434   2.928  0.00344 ** 
-# identity(7) Atheist or agnostic  0.151202   0.035310   4.282 1.93e-05 ***
-
-# Residual standard error: 0.4791 on 2362 degrees of freedom
-#  (636 observations deleted due to missingness)
-# Multiple R-squared:  0.01928,	Adjusted R-squared:  0.01637 
-# F-statistic: 6.632 on 7 and 2362 DF,  p-value: 8.655e-08
-
-
+# H2a ANSWER pt.2: Overall, more frequent attendance at a religious service is associated with
+# a higher likelihood of expressing linked fate. Neither variance in religious identity nor
+# variance in ethnicity help to explain this trend/have much effect on this trend.
 
 summary(lm(data=df2, linkedfate_yes~aapiethnicity))
 summary(lm(data=df2, linkedfate_yes~identity_hist*aapi_hist)) # This is an interaction effect
@@ -803,17 +801,6 @@ summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_hist)) # This is an intera
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~identity_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identity_hist)) 
 
-
-#### REGRESSION PLOT ####
-
-# Code from https://sejohnston.com/2012/08/09/a-quick-and-easy-function-to-plot-lm-results-in-r/
-
-identity_linkedfate_reg <- ggplot(df2, 
-                              aes(x = identity, y = linkedfate_yes)) + 
-                            geom_point() +
-                            stat_smooth(method = "lm", col = "red")
-
-identity_linkedfate_reg
 
 
 #### Task list: #####

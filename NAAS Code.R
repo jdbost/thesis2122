@@ -526,6 +526,12 @@ ggcorrplot(corr_mat,
 
 summary(lm(data=df2, express_ex_num~express_in_num))
 summary(lm(data=df2, linkedfate_race_yes~express_in_num))
+
+# Coefficients:
+#                 Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)    0.6042548  0.0127877  47.253   <2e-16 ***
+# express_in_num 0.0009827  0.0069754   0.141    0.888    
+
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
