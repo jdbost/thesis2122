@@ -604,7 +604,6 @@ ggcorrplot(corr_mat,
 # What does this graph communicate that the jitterplot doesn't?
 
 
-
 #### Basic correlations (we're going to use linear regression) ####
 
 # NOTES FROM DR.B
@@ -737,7 +736,9 @@ summary(lm(data=df2[df2$aapiethnicity=="(03) Indian",], linkedfate_yes~identity)
 
 # NOTE: The effect in None is exaggerated within the Indian subset -- same with Indian Catholics
 
-# H1 ANSWER pt. 2: When interacting identity and ethnicity, 
+# H1 ANSWER pt. 2: When interacting identity and ethnicity, nothing much changes tbh.
+# Essentially, religious identity doesn't have a strong influence on Asian Americans' expression of linked fate.
+
 
 # H2a: Asian Americans with higher levels of external religious expression 
 # (or the frequency measure) will be less likely to express higher levels of 
@@ -786,9 +787,16 @@ summary(lm(data=df2, linkedfate_yes~express_num*identity))
 # Multiple R-squared:  0.02382,	Adjusted R-squared:  0.01843 
 # F-statistic: 4.422 on 13 and 2356 DF,  p-value: 1.849e-07
 
+# The results from the atheist/agnostic group are really interesting --
+# among those identifying as atheist/agnostic, the more frequently someone 
+
+# H2a ANSWER pt.2: Overall, there doesn't seem to be a big difference across religious 
+# identities, and the association of more frequent religious service attendance 
+# is still significant even when controlling for identity.
+
 summary(lm(data=df2, linkedfate_yes~express_num*aapi_hist))
 
-# H2a ANSWER pt.2: Overall, more frequent attendance at a religious service is associated with
+# H2a ANSWER pt.3: Overall, more frequent attendance at a religious service is associated with
 # a higher likelihood of expressing linked fate. Neither variance in religious identity nor
 # variance in ethnicity help to explain this trend/have much effect on this trend.
 
@@ -800,6 +808,11 @@ summary(lm(data=df2, linkedfate_yes~identity_hist))
 summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~identity_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identity_hist)) 
+
+
+
+#### REGRESSION TABLES ####
+
 
 
 
