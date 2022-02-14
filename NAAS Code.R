@@ -532,6 +532,75 @@ summary(lm(data=df2, linkedfate_race_yes~express_in_num))
 # (Intercept)    0.6042548  0.0127877  47.253   <2e-16 ***
 # express_in_num 0.0009827  0.0069754   0.141    0.888    
 
+# Residual standard error: 0.4888 on 3939 degrees of freedom
+#  (421 observations deleted due to missingness)
+# Multiple R-squared:  5.038e-06,	Adjusted R-squared:  -0.0002488 
+# F-statistic: 0.01985 on 1 and 3939 DF,  p-value: 0.888
+
+summary(lm(data=df2, linkedfate_race_yes~express_in_num*identity_hist))
+
+# Coefficients:
+#                                                  Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                                      0.575060   0.042356  13.577   <2e-16 ***
+# express_in_num                                   0.007305   0.020603   0.355   0.7229    
+# identity_histProtestant                         -0.140042   0.156523  -0.895   0.3710    
+# identity_histChristian                           0.059222   0.053666   1.104   0.2699    
+# identity_histMuslim                             -0.100964   0.062424  -1.617   0.1059    
+# identity_histHindu                              -0.110423   0.066873  -1.651   0.0988 .  
+# identity_histBuddhist                            0.031672   0.054824   0.578   0.5635    
+# identity_histAtheist or agnostic                 0.097502   0.061416   1.588   0.1125    
+# identity_histOther                               0.072551   0.063981   1.134   0.2569    
+# identity_histNone                                0.072530   0.048755   1.488   0.1369    
+# express_in_num:identity_histProtestant           0.110023   0.083682   1.315   0.1887    
+# express_in_num:identity_histChristian           -0.001151   0.027070  -0.043   0.9661    
+# express_in_num:identity_histMuslim               0.060111   0.030579   1.966   0.0494 *  
+# express_in_num:identity_histHindu                0.072880   0.035876   2.031   0.0423 *  
+# express_in_num:identity_histBuddhist            -0.063212   0.027187  -2.325   0.0201 *  
+# express_in_num:identity_histAtheist or agnostic  0.031953   0.064240   0.497   0.6189    
+# express_in_num:identity_histOther                0.009842   0.030887   0.319   0.7500    
+# express_in_num:identity_histNone                -0.022473   0.029950  -0.750   0.4531    
+
+# Residual standard error: 0.4849 on 3701 degrees of freedom
+#  (643 observations deleted due to missingness)
+# Multiple R-squared:  0.0202,	Adjusted R-squared:  0.0157 
+# F-statistic: 4.489 on 17 and 3701 DF,  p-value: 2.21e-09
+
+summary(lm(data=df2, linkedfate_race_yes~express_ex_num))
+
+# Coefficients:
+#                 Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)     0.626684   0.020466  30.621   <2e-16 ***
+# express_ex_num -0.011140   0.006194  -1.798   0.0722 .  
+
+# Residual standard error: 0.4911 on 2978 degrees of freedom
+#  (1382 observations deleted due to missingness)
+# Multiple R-squared:  0.001085,	Adjusted R-squared:  0.0007495 
+# F-statistic: 3.234 on 1 and 2978 DF,  p-value: 0.07221
+
+summary(lm(data=df2, linkedfate_race_yes~express_ex_num*identity_hist))
+
+# Coefficients:
+#                                          Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                             0.5925383  0.0592357  10.003  < 2e-16 ***
+# express_ex_num                         -0.0009972  0.0161393  -0.062 0.950736    
+# identity_histProtestant                -0.0856187  0.2160280  -0.396 0.691889    
+# identity_histChristian                  0.0962956  0.0786970   1.224 0.221191    
+# identity_histMuslim                     0.0655829  0.0800274   0.820 0.412564    
+# identity_histHindu                      0.0140488  0.0935277   0.150 0.880609    
+# identity_histBuddhist                  -0.0818734  0.0728823  -1.123 0.261373    
+# identity_histOther                      0.2509944  0.0744370   3.372 0.000756 ***
+# express_ex_num:identity_histProtestant  0.0399516  0.0644274   0.620 0.535238    
+# express_ex_num:identity_histChristian  -0.0125502  0.0211775  -0.593 0.553480    
+# express_ex_num:identity_histMuslim     -0.0212183  0.0222602  -0.953 0.340569    
+# express_ex_num:identity_histHindu      -0.0107685  0.0299440  -0.360 0.719155    
+# express_ex_num:identity_histBuddhist   -0.0010796  0.0229729  -0.047 0.962522    
+# express_ex_num:identity_histOther      -0.0589136  0.0219843  -2.680 0.007407 ** 
+
+# Residual standard error: 0.487 on 2966 degrees of freedom
+#  (1382 observations deleted due to missingness)
+# Multiple R-squared:  0.02137,	Adjusted R-squared:  0.01708 
+# F-statistic: 4.982 on 13 and 2966 DF,  p-value: 9.24e-09
+
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))
 summary(lm(data=df2, linkedfate_ethn_yes~express_ex_num))

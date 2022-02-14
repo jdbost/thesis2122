@@ -140,7 +140,6 @@ df2$linkedfate_pos_hist <- factor(df2$linkedfate_pos_hist,
 table(df2$linkedfate_pos_hist)
 
 
-
 #### DESCRIPTIVE STATISTICS ####
 
 table(df2$identity)
@@ -173,7 +172,10 @@ df2$identity_hist <- factor(df2$identity_hist,
 table(df2$identity_hist)
 
 df2$identity_reg <- as.numeric(df2$identity_hist)
+df2$identity_reg <- (df2$identity_reg-1)
 
+table(df2$identity_hist,
+      df2$identity_reg)
 
 
 table(df2$express)
@@ -617,23 +619,7 @@ ggcorrplot(corr_mat,
 # will likely express lower levels of panethnic linked fate than religious Asian Americans 
 # belonging to a non-Christian religion, such as Buddhism or Hinduism.
 
-summary(lm(data=df2, linkedfate_yes~identity))
-
-# Coefficients:
-#                                  Estimate Std. Error t value Pr(>|t|)    
-# Intercept = Catholics            0.619835   0.022047  28.115   <2e-16 ***
-# identity(2) Protestant           0.018875   0.044764   0.422   0.6733    
-# identity(3) Christian           -0.007813   0.030242  -0.258   0.7962    
-# identity(4) Muslim              -0.025632   0.062414  -0.411   0.6813    
-# identity(5) Hindu               -0.061695   0.034204  -1.804   0.0714 .  
-# identity(6) Buddhist             0.053881   0.034595   1.558   0.1195    
-# identity(7) Atheist or agnostic  0.067380   0.031987   2.106   0.0352 *  
-# identity(8) Other:(SPECIFY)      0.005165   0.061265   0.084   0.9328    
-# identity(9) None                -0.070189   0.030053  -2.336   0.0196 *  
-
-# Residual standard error: 0.485 on 2997 degrees of freedom
-# Multiple R-squared:  0.00995,	Adjusted R-squared:  0.007307 
-# F-statistic: 3.765 on 8 and 2997 DF,  p-value: 0.0002114
+summary(lm(data=df2, linkedfate_yes~identity_hist))
 
 # H1 ANSWER: no real difference between "Christian" (Catholic, Protestant, Christian) 
 ## and non-Christian religions (except maybe for Hindus) 
@@ -641,100 +627,35 @@ summary(lm(data=df2, linkedfate_yes~identity))
 ## suggesting some key ideological/???? difference in beliefs between the two groups maybe?
 ## or at the very least that it's not appropriate to group them together.
 
+model.1 <- lm(data=df2, linkedfate_yes~identity_hist)
+summary(model.1)
+
+predict.1 <- cbind(df2, predict(model.1, interval = 'confidence'))
+
+fit.1 <- ggplot(predict.1, aes(x = identity_hist,
+                               y = linkedfate_yes)) +
+          geom_point() +
+          geom_line(aes(identity_hist, fit)) +
+          geom_ribbon(aes(ymin=lwr,ymax=upr), alpha=0.3)
+fit.1
+
 # NOTE: How does this vary across ethnicity?
 
-summary(lm(data=df2, linkedfate_yes~identity*aapi_hist)) # Interaction: identity DEPENDS ON ethnicity
-
-# Coefficients: (5 not defined because of singularities)
-#                                                       Estimate Std. Error t value Pr(>|t|)    
-# Intercept = Catholics?                               0.5975610  0.0535216  11.165  < 2e-16 ***
-# identity(2) Protestant                               0.1421651  0.0779890   1.823  0.06842 .  
-# identity(3) Christian                                0.0346229  0.0649194   0.533  0.59385    
-# identity(4) Muslim                                   0.1524390  0.2481695   0.614  0.53910    
-# identity(5) Hindu                                   -0.2642276  0.2848905  -0.927  0.35376    
-# identity(6) Buddhist                                 0.0985175  0.0718850   1.370  0.17064    
-# identity(7) Atheist or agnostic                      0.0987007  0.0629460   1.568  0.11698    
-# identity(8) Other:(SPECIFY)                          0.0024390  0.1623391   0.015  0.98801    
-# identity(9) None                                    -0.0009508  0.0605047  -0.016  0.98746    
-# aapi_histIndian                                      0.1224390  0.1107264   1.106  0.26891    
-# aapi_histKorean                                     -0.1808943  0.1124803  -1.608  0.10789    
-# aapi_histFilipino                                    0.0432554  0.0618330   0.700  0.48426    
-# aapi_histVietnamese                                  0.0539542  0.0801471   0.673  0.50088    
-# aapi_histJapanese                                   -0.0186136  0.1233994  -0.151  0.88011    
-# aapi_histOther                                      -0.0758218  0.1143562  -0.663  0.50736    
-# identity(2) Protestant:aapi_histIndian              -0.5764508  0.2214370  -2.603  0.00928 ** 
-# identity(3) Christian:aapi_histIndian               -0.2731415  0.1493656  -1.829  0.06755 .  
-# identity(4) Muslim:aapi_histIndian                  -0.2613279  0.2898854  -0.901  0.36740    
-# identity(5) Hindu:aapi_histIndian                    0.1156562  0.3021388   0.383  0.70190    
-# identity(6) Buddhist:aapi_histIndian                -0.5685175  0.2707152  -2.100  0.03581 *  
-# identity(7) Atheist or agnostic:aapi_histIndian     -0.2075896  0.1410064  -1.472  0.14107    
-# identity(8) Other:(SPECIFY):aapi_histIndian         -0.2224390  0.2209059  -1.007  0.31405    
-# identity(9) None:aapi_histIndian                    -0.3728953  0.1486303  -2.509  0.01216 *  
-# identity(2) Protestant:aapi_histKorean              -0.0388317  0.1589507  -0.244  0.80702    
-# identity(3) Christian:aapi_histKorean                0.1860730  0.1287751   1.445  0.14858    
-# identity(4) Muslim:aapi_histKorean                          NA         NA      NA       NA    
-# identity(5) Hindu:aapi_histKorean                    0.3475610  0.4565051   0.761  0.44651    
-# identity(6) Buddhist:aapi_histKorean                -0.0151841  0.3638705  -0.042  0.96672    
-# identity(7) Atheist or agnostic:aapi_histKorean      0.1816023  0.1444557   1.257  0.20880    
-# identity(8) Other:(SPECIFY):aapi_histKorean          0.3308943  0.2559355   1.293  0.19615    
-# identity(9) None:aapi_histKorean                     0.0842841  0.1499415   0.562  0.57408    
-# identity(2) Protestant:aapi_histFilipino            -0.2375268  0.1685083  -1.410  0.15877    
-# identity(3) Christian:aapi_histFilipino             -0.0631944  0.0870067  -0.726  0.46770    
-# identity(4) Muslim:aapi_histFilipino                        NA         NA      NA       NA    
-# identity(5) Hindu:aapi_histFilipino                  0.6234113  0.5630413   1.107  0.26829    
-# identity(7) Atheist or agnostic:aapi_histFilipino   -0.1395170  0.1196525  -1.166  0.24370    
-# identity(9) None:aapi_histFilipino                  -0.1853201  0.1236793  -1.498  0.13414    
-# identity(2) Protestant:aapi_histVietnamese           0.2063198  0.3564945   0.579  0.56280    
-# identity(3) Christian:aapi_histVietnamese           -0.2155498  0.1469382  -1.467  0.14250    
-# identity(4) Muslim:aapi_histVietnamese                      NA         NA      NA       NA    
-# identity(5) Hindu:aapi_histVietnamese                       NA         NA      NA       NA    
-# identity(6) Buddhist:aapi_histVietnamese            -0.0519194  0.1147101  -0.453  0.65086    
-# identity(7) Atheist or agnostic:aapi_histVietnamese -0.0579082  0.1286685  -0.450  0.65270    
-# identity(8) Other:(SPECIFY):aapi_histVietnamese     -0.2539542  0.2772937  -0.916  0.35983    
-# identity(9) None:aapi_histVietnamese                -0.1227866  0.1172376  -1.047  0.29503    
-# identity(2) Protestant:aapi_histJapanese            -0.1611124  0.1668559  -0.966  0.33433    
-# identity(3) Christian:aapi_histJapanese             -0.0282044  0.1394344  -0.202  0.83971    
-# identity(4) Muslim:aapi_histJapanese                 0.2686136  0.5557383   0.483  0.62889    
-# identity(5) Hindu:aapi_histJapanese                         NA         NA      NA       NA    
-# identity(6) Buddhist:aapi_histJapanese              -0.0186413  0.1424562  -0.131  0.89590    
-# identity(7) Atheist or agnostic:aapi_histJapanese   -0.0055169  0.1420414  -0.039  0.96902    
-# identity(8) Other:(SPECIFY):aapi_histJapanese        0.2519469  0.2414360   1.044  0.29679    
-# identity(9) None:aapi_histJapanese                  -0.0908171  0.1379678  -0.658  0.51043    
-# identity(2) Protestant:aapi_histOther                0.0027625  0.1893927   0.015  0.98836    
-# identity(3) Christian:aapi_histOther                 0.0936379  0.1354334   0.691  0.48937    
-# identity(4) Muslim:aapi_histOther                   -0.1089608  0.2773216  -0.393  0.69442    
-# identity(5) Hindu:aapi_histOther                     0.0549885  0.3256628   0.169  0.86593    
-# identity(6) Buddhist:aapi_histOther                  0.0583148  0.1348206   0.433  0.66538    
-# identity(7) Atheist or agnostic:aapi_histOther       0.1470020  0.1401344   1.049  0.29426    
-# identity(8) Other:(SPECIFY):aapi_histOther           0.0591552  0.2369415   0.250  0.80287    
-# identity(9) None:aapi_histOther                      0.0347672  0.1295127   0.268  0.78837    
-
-# Residual standard error: 0.4847 on 2948 degrees of freedom
-# Multiple R-squared:  0.02761,	Adjusted R-squared:  0.008814 
-# F-statistic: 1.469 on 57 and 2948 DF,  p-value: 0.01308
+summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_reg)) # Interaction: identity DEPENDS ON ethnicity
 
 # NOTE: only significance for:
 # Protestant Indian
 # Christian Indian
 # Buddhist Indian
 # None Indian
-# SO subset among Indians:
 
-summary(lm(data=df2[df2$aapiethnicity=="(03) Indian",], linkedfate_yes~identity)) # This is a subsetting regression
-
-# Coefficients:
-#                                 Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)                      0.72000    0.09895   7.276 1.43e-12 ***
-# identity(2) Protestant          -0.43429    0.21157  -2.053  0.04065 *  
-# identity(3) Christian           -0.23852    0.13733  -1.737  0.08306 .  
-# identity(4) Muslim              -0.10889    0.15294  -0.712  0.47684    
-# identity(5) Hindu               -0.14857    0.10272  -1.446  0.14875    
-# identity(6) Buddhist            -0.47000    0.26644  -1.764  0.07838 .  
-# identity(7) Atheist or agnostic -0.10889    0.12881  -0.845  0.39834    
-# identity(8) Other:(SPECIFY)     -0.22000    0.15294  -1.438  0.15097    
-# identity(9) None                -0.37385    0.13859  -2.697  0.00724 **
-
-# NOTE: The effect in None is exaggerated within the Indian subset -- same with Indian Catholics
+summary(lm(data=df2[df2$aapi_reg=="1",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="2",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="3",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="4",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="5",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="6",], linkedfate_yes~identity_reg)) # This is an interaction effect
+summary(lm(data=df2[df2$aapi_reg=="7",], linkedfate_yes~identity_reg)) # This is an interaction effect
 
 # H1 ANSWER pt. 2: When interacting identity and ethnicity, nothing much changes tbh.
 # Essentially, religious identity doesn't have a strong influence on Asian Americans' expression of linked fate.
@@ -763,29 +684,7 @@ summary(lm(data=df2, linkedfate_yes~express_num))
 
 # How does this vary by religion?
 
-summary(lm(data=df2, linkedfate_yes~express_num*identity))
-
-# Coefficients:
-#                                               Estimate Std. Error t value Pr(>|t|)
-# Intercept = Catholics + "Never"               0.536530   0.041527  12.920  < 2e-16 ***
-# express_num                                   0.029911   0.012701   2.355  0.01861 *
-# identity_histProtestant                       0.132437   0.084693   1.564  0.11801
-# identity_histChristian                       -0.040665   0.057846  -0.703  0.48213
-# identity_histMuslim                          -0.228053   0.124820  -1.827  0.06782 .
-# identity_histHindu                           -0.052018   0.065787  -0.791  0.42919
-# identity_histBuddhist                         0.037655   0.058088   0.648  0.51689
-# identity_histAtheist or agnostic              0.136490   0.048891   2.792  0.00529 **
-# express_num:identity_histProtestant          -0.040128   0.024782  -1.619  0.10552
-# express_num:identity_histChristian            0.008926   0.017204   0.519  0.60390
-# express_num:identity_histMuslim               0.073853   0.039381   1.875  0.06087 .
-# express_num:identity_histHindu                0.001869   0.022854   0.082  0.93484
-# express_num:identity_histBuddhist             0.042337   0.025807   1.641  0.10103
-# express_num:identity_histAtheist or agnostic  0.003879   0.031168   0.124  0.90096
-
-# Residual standard error: 0.4786 on 2356 degrees of freedom
-#  (636 observations deleted due to missingness)
-# Multiple R-squared:  0.02382,	Adjusted R-squared:  0.01843 
-# F-statistic: 4.422 on 13 and 2356 DF,  p-value: 1.849e-07
+summary(lm(data=df2, linkedfate_yes~express_num*identity_hist))
 
 # The results from the atheist/agnostic group are really interesting --
 # among those identifying as atheist/agnostic, the more frequently someone 
@@ -809,12 +708,73 @@ summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_hist)) # This is an intera
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~identity_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identity_hist)) 
 
+# Robustness checks w/linkedfate_reg (ordinal)
+
+rob_model.1 <- lm(data=df2, linkedfate_reg~identity_reg)
+
+rob_model.2 <- lm(data=df2, linkedfate_reg~identity_reg*aapi_reg)
+
+rob_model.3 <- lm(data=df2, linkedfate_reg~express_num)
+
+rob_model.4 <- lm(data=df2, linkedfate_reg~express_num*identity_reg)
+
+summary(rob_model.1)
+summary(rob_model.2)
+summary(rob_model.3)
+summary(rob_model.4)
+
+# Robustness checks w/linkedfate_pos (binary)
+
+rob2_model.1 <- lm(data=df2, linkedfate_pos_num2~identity_reg)
+
+rob2_model.2 <- lm(data=df2, linkedfate_pos_num2~identity_reg*aapi_reg)
+
+rob2_model.3 <- lm(data=df2, linkedfate_pos_num2~express_num)
+
+rob2_model.4 <- lm(data=df2, linkedfate_pos_num2~express_num*identity_reg)
+
+summary(rob2_model.1)
+summary(rob2_model.2)
+summary(rob2_model.3)
+summary(rob2_model.4)
+
+summary(lm(data=df2[df2$identity_reg=="0",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="1",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="2",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="3",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="4",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="5",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="6",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="7",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_reg=="8",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+
+
 
 
 #### REGRESSION TABLES ####
 
+install.packages("stargazer")
 
+library(stargazer)
 
+model.1 <- lm(data=df2, linkedfate_yes~identity_reg)
+
+model.2 <- lm(data=df2, linkedfate_yes~identity_reg*aapi_reg)
+
+model.3 <- lm(data=df2, linkedfate_yes~express_num)
+
+model.4 <- lm(data=df2, linkedfate_yes~express_num*identity_reg)
+
+summary(model.1)
+summary(model.2)
+summary(model.3)
+summary(model.4)
+
+stargazer(model.1, model.2, model.3, model.4, title="Regression Results",
+          dep.var.labels=c("Overall Rating","High Rating"),
+          covariate.labels=c("Handling of Complaints","No Special Privileges",
+                             "Opportunity to Learn","Performance-Based Raises","Too Critical","Advancement"),
+          omit.stat=c("LL","ser","f"), ci=TRUE, ci.level=0.90, single.row=TRUE)
 
 #### Task list: #####
 ## 1 - check to make sure all the independent variables are coded as you want
