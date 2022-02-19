@@ -606,7 +606,7 @@ ggcorrplot(corr_mat,
 # What does this graph communicate that the jitterplot doesn't?
 
 
-#### Basic correlations (we're going to use linear regression) ####
+#### HYPOTHESIS TESTS ####
 
 # NOTES FROM DR.B
 # summary(lm(data=df, y~x1+x2)) # basic regression
@@ -621,27 +621,25 @@ ggcorrplot(corr_mat,
 
 summary(lm(data=df2, linkedfate_yes~identity_hist))
 
+mod.1 <- lm(data=df2, linkedfate_yes~identity_hist)
+
+summary(mod.1)
+
 # H1 ANSWER: no real difference between "Christian" (Catholic, Protestant, Christian) 
 ## and non-Christian religions (except maybe for Hindus) 
 ## Significant results for Atheist/agnostic group and None group, perhaps
 ## suggesting some key ideological/???? difference in beliefs between the two groups maybe?
 ## or at the very least that it's not appropriate to group them together.
 
-model.1 <- lm(data=df2, linkedfate_yes~identity_hist)
-summary(model.1)
+# INTERACTION: How does this vary across ethnicity?
 
-predict.1 <- cbind(df2, predict(model.1, interval = 'confidence'))
+int.1.1 <- lm(data=df2, linkedfate_yes~identity_hist*aapi_hist) # Interaction: identity DEPENDS ON ethnicity
 
-fit.1 <- ggplot(predict.1, aes(x = identity_hist,
-                               y = linkedfate_yes)) +
-          geom_point() +
-          geom_line(aes(identity_hist, fit)) +
-          geom_ribbon(aes(ymin=lwr,ymax=upr), alpha=0.3)
-fit.1
+summary(int.1.1)
 
-# NOTE: How does this vary across ethnicity?
+summary(lm(data=df2[df2$identity_hist=="Atheist or agnostic",], linkedfate_yes~aapi_hist)) # This is a subsetting regression
+summary(lm(data=df2[df2$identity_hist=="None",], linkedfate_yes~aapi_hist)) # This is a subsetting regression
 
-summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_reg)) # Interaction: identity DEPENDS ON ethnicity
 
 # NOTE: only significance for:
 # Protestant Indian
@@ -649,23 +647,18 @@ summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_reg)) # Interaction: ident
 # Buddhist Indian
 # None Indian
 
-summary(lm(data=df2[df2$aapi_reg=="1",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="2",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="3",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="4",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="5",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="6",], linkedfate_yes~identity_reg)) # This is an interaction effect
-summary(lm(data=df2[df2$aapi_reg=="7",], linkedfate_yes~identity_reg)) # This is an interaction effect
-
 # H1 ANSWER pt. 2: When interacting identity and ethnicity, nothing much changes tbh.
 # Essentially, religious identity doesn't have a strong influence on Asian Americans' expression of linked fate.
-
 
 # H2a: Asian Americans with higher levels of external religious expression 
 # (or the frequency measure) will be less likely to express higher levels of 
 # linked fate than Asian Americans with lower levels of external religious expression.
 
 summary(lm(data=df2, linkedfate_yes~express_num))
+
+mod.2 <- lm(data=df2, linkedfate_yes~express_num)
+
+summary(mod.2)
 
 # Coefficients:
 #                       Estimate Std. Error t value Pr(>|t|)    
@@ -682,99 +675,220 @@ summary(lm(data=df2, linkedfate_yes~express_num))
 ## Although, notably, baseline (i.e. non-religious people) likelihood of expressing linked fate
 ## is pretty high -- about 60%!
 
-# How does this vary by religion?
+# INTERACTION[?]: How does this vary by religion?
 
-summary(lm(data=df2, linkedfate_yes~express_num*identity_hist))
+int.2.1 <- lm(data=df2, linkedfate_yes~express_num*identity_hist)
 
-# The results from the atheist/agnostic group are really interesting --
-# among those identifying as atheist/agnostic, the more frequently someone 
+summary(int.2.1)
+
+## The results from the atheist/agnostic group are really interesting --
+## among those identifying as atheist/agnostic, the more frequently someone 
 
 # H2a ANSWER pt.2: Overall, there doesn't seem to be a big difference across religious 
 # identities, and the association of more frequent religious service attendance 
 # is still significant even when controlling for identity.
 
-summary(lm(data=df2, linkedfate_yes~express_num*aapi_hist))
+int.2.2 <- lm(data=df2, linkedfate_yes~express_num*aapi_hist)
+
+summary(int.2.2)
 
 # H2a ANSWER pt.3: Overall, more frequent attendance at a religious service is associated with
 # a higher likelihood of expressing linked fate. Neither variance in religious identity nor
 # variance in ethnicity help to explain this trend/have much effect on this trend.
+
+# CONTROLLING IVs
+
+int.3 <- lm(data=df2, linkedfate_yes~identity_hist+express_num)
+
+summary(int.3)
+
+# Coefficients:
+#                                   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)                       0.521124   0.028619  18.209  < 2e-16 ***
+# identity_histProtestant           0.012631   0.044229   0.286  0.77522    
+# identity_histChristian           -0.015106   0.029901  -0.505  0.61348    
+# identity_histMuslim              -0.024515   0.061647  -0.398  0.69090    
+# identity_histHindu               -0.045099   0.033927  -1.329  0.18389    
+# identity_histBuddhist             0.103765   0.035434   2.928  0.00344 ** 
+# identity_histAtheist or agnostic  0.151202   0.035310   4.282 1.93e-05 ***
+# express_num                       0.035442   0.006668   5.315 1.16e-07 ***
+
+# Residual standard error: 0.4791 on 2362 degrees of freedom
+#  (636 observations deleted due to missingness)
+# Multiple R-squared:  0.01928,	Adjusted R-squared:  0.01637 
+# F-statistic: 6.632 on 7 and 2362 DF,  p-value: 8.655e-08
+
+# Robustness checks w/linkedfate_reg (ordinal)
+
+rob_mod.1.1 <- lm(data=df2, linkedfate_reg~identity_hist)
+
+rob_mod.1.2 <- lm(data=df2, linkedfate_reg~identity_hist*aapi_hist)
+
+rob_mod.2.1 <- lm(data=df2, linkedfate_reg~express_num)
+
+rob_mod.2.2 <- lm(data=df2, linkedfate_reg~express_num*identity_hist)
+
+summary(rob_mod.1.1)
+summary(rob_mod.1.2)
+summary(rob_mod.2.1)
+summary(rob_mod.2.2)
+
+# Robustness checks w/linkedfate_pos (binary)
+
+rob2_mod.1.1 <- lm(data=df2, linkedfate_pos_num2~identity_reg)
+
+rob2_mod.1.2 <- lm(data=df2, linkedfate_pos_num2~identity_reg*aapi_reg)
+
+rob2_mod.2.1 <- lm(data=df2, linkedfate_pos_num2~express_num)
+
+rob2_mod.2.2 <- lm(data=df2, linkedfate_pos_num2~express_num*identity_reg)
+
+summary(rob2_mod.1.1)
+summary(rob2_mod.1.2)
+summary(rob2_mod.2.1)
+summary(rob2_mod.2.2)
+
+# Misc code (simply cannot murder my darlings)
 
 summary(lm(data=df2, linkedfate_yes~aapiethnicity))
 summary(lm(data=df2, linkedfate_yes~identity_hist*aapi_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~express_num)) # This is a subsetting regression
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~express_num))
 summary(lm(data=df2, linkedfate_yes~identity_hist))
-summary(lm(data=df2, linkedfate_yes~identity_reg*aapi_hist)) # This is an interaction effect
+summary(lm(data=df2, linkedfate_yes~identity_hist*aapi_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(01) Chinese",], linkedfate_yes~identity_hist)) # This is an interaction effect
 summary(lm(data=df2[df2$aapiethnicity=="(07) Japanese",], linkedfate_yes~identity_hist)) 
 
-# Robustness checks w/linkedfate_reg (ordinal)
-
-rob_model.1 <- lm(data=df2, linkedfate_reg~identity_reg)
-
-rob_model.2 <- lm(data=df2, linkedfate_reg~identity_reg*aapi_reg)
-
-rob_model.3 <- lm(data=df2, linkedfate_reg~express_num)
-
-rob_model.4 <- lm(data=df2, linkedfate_reg~express_num*identity_reg)
-
-summary(rob_model.1)
-summary(rob_model.2)
-summary(rob_model.3)
-summary(rob_model.4)
-
-# Robustness checks w/linkedfate_pos (binary)
-
-rob2_model.1 <- lm(data=df2, linkedfate_pos_num2~identity_reg)
-
-rob2_model.2 <- lm(data=df2, linkedfate_pos_num2~identity_reg*aapi_reg)
-
-rob2_model.3 <- lm(data=df2, linkedfate_pos_num2~express_num)
-
-rob2_model.4 <- lm(data=df2, linkedfate_pos_num2~express_num*identity_reg)
-
-summary(rob2_model.1)
-summary(rob2_model.2)
-summary(rob2_model.3)
-summary(rob2_model.4)
-
-summary(lm(data=df2[df2$identity_reg=="0",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="1",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="2",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="3",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="4",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="5",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="6",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="7",], linkedfate_pos_num2~express_num)) # This is an interaction effect
-summary(lm(data=df2[df2$identity_reg=="8",], linkedfate_pos_num2~express_num)) # This is an interaction effect
+summary(lm(data=df2[df2$identity_hist=="Protestant",], linkedfate_yes~aapiethnicity)) # This is a subsetting regression
 
 
 
-
-#### REGRESSION TABLES ####
-
-install.packages("stargazer")
+#### REGRESSION TABLES - STARGAZER ####
 
 library(stargazer)
 
-model.1 <- lm(data=df2, linkedfate_yes~identity_reg)
+# Example code from Queen Minnie - MODEL 1 AND MODEL 2 AND CONTROLS
 
-model.2 <- lm(data=df2, linkedfate_yes~identity_reg*aapi_reg)
+stargazer(mod.1,mod.2,int.3,
+          type = "text",
+          title = "Table 1: Regression Results",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  # or you can do the default levels
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate"),
+          covariate.labels = c("Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic", "Other", "None",
+                               "Religious Expression"),    # put in order that you list the ind. levels
+          keep.stat = c("n","rsq"),
+          out = "regresults.html")   # saves as html; I converted this to PDF          
 
-model.3 <- lm(data=df2, linkedfate_yes~express_num)
+# MODEL 1 INTERACTIONS
 
-model.4 <- lm(data=df2, linkedfate_yes~express_num*identity_reg)
+stargazer(int.1.1,
+          type = "text",
+          title = "Appendix A: Religious Identity and Ethnicity Model",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate"),
+          covariate.labels = c("Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic", "Other", "None",
+                               "Indian", "Korean", "Filipino", "Vietnamese","Japanese","Other",
+                               "Protestant Indian", "Christian Indian", "Muslim Indian", "Hindu Indian", "Buddhist Indian", "Atheist or agnostic Indian", "Other Indian", "None Indian",
+                               "Protestant Korean", "Christian Korean", "Muslim Korean", "Hindu Korean", "Buddhist Korean", "Atheist or agnostic Korean", "Other Korean", "None Korean",
+                               "Protestant Filipino", "Christian Filipino", "Muslim Filipino", "Hindu Filipino", "Buddhist Filipino", "Atheist or agnostic Filipino", "Other Filipino", "None Filipino",
+                               "Protestant Vietnamese", "Christian Vietnamese", "Muslim Vietnamese", "Hindu Vietnamese", "Buddhist Vietnamese", "Atheist or agnostic Vietnamese", "Other Vietnamese", "None Vietnamese",
+                               "Protestant Japanese", "Christian Japanese", "Muslim Japanese", "Hindu Japanese", "Buddhist Japanese", "Atheist or agnostic Japanese", "Other Japanese", "None Japanese",
+                               "Protestant Other", "Christian Other", "Muslim Other", "Hindu Other", "Buddhist Other", "Atheist or agnostic Other", "Other Other", "None Other"),
+          keep.stat = c("n","rsq"),
+          out = "mod1int.html")   # saves as html; I converted this to PDF  
 
-summary(model.1)
-summary(model.2)
-summary(model.3)
-summary(model.4)
+# MODEL 2 INTERACTIONS
 
-stargazer(model.1, model.2, model.3, model.4, title="Regression Results",
-          dep.var.labels=c("Overall Rating","High Rating"),
-          covariate.labels=c("Handling of Complaints","No Special Privileges",
-                             "Opportunity to Learn","Performance-Based Raises","Too Critical","Advancement"),
-          omit.stat=c("LL","ser","f"), ci=TRUE, ci.level=0.90, single.row=TRUE)
+stargazer(int.2.1,int.2.2,
+          type = "text",
+          title = "Appendix B: Religious Expression Interaction Effects",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate"),
+          covariate.labels = c("Religious Expression",
+                               "Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic",
+                               "Protestant Expression","Christian Expression","Muslim Expression","Hindu Expression","Buddhist Expression","Atheist or agnostic Expression",
+                               "Indian", "Korean", "Filipino", "Vietnamese","Japanese","Other",
+                               "Indian Expression", "Korean Expression", "Filipino Expression", "Vietnamese Expression","Japanese Expression","Other Expression"),
+          keep.stat = c("n","rsq"),
+          out = "mod2int.html")   # saves as html; I converted this to PDF          
+
+# IV CONTROLS
+
+stargazer(int.3,
+          type = "text",
+          title = "Table 1: Regression Results",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  # or you can do the default levels
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate"),
+          covariate.labels = c("Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic",
+                               "Religious Expression"),    # put in order that you list the ind. levels
+          keep.stat = c("n","rsq"),
+          out = "mod1mod2con.html")   # saves as html; I converted this to PDF          
+
+# MODEL 1 ROBUSTNESS CHECKS
+
+stargazer(rob_mod.1.1,rob_mod.1.2,
+          type = "text",
+          title = "Appendix C: Model 1 Robustness Check",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate Scale"),
+          covariate.labels = c("Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic", "Other", "None",
+                               "Indian", "Korean", "Filipino", "Vietnamese","Japanese","Other",
+                               "Protestant Indian", "Christian Indian", "Muslim Indian", "Hindu Indian", "Buddhist Indian", "Atheist or agnostic Indian", "Other Indian", "None Indian",
+                               "Protestant Korean", "Christian Korean", "Muslim Korean", "Hindu Korean", "Buddhist Korean", "Atheist or agnostic Korean", "Other Korean", "None Korean",
+                               "Protestant Filipino", "Christian Filipino", "Muslim Filipino", "Hindu Filipino", "Buddhist Filipino", "Atheist or agnostic Filipino", "Other Filipino", "None Filipino",
+                               "Protestant Vietnamese", "Christian Vietnamese", "Muslim Vietnamese", "Hindu Vietnamese", "Buddhist Vietnamese", "Atheist or agnostic Vietnamese", "Other Vietnamese", "None Vietnamese",
+                               "Protestant Japanese", "Christian Japanese", "Muslim Japanese", "Hindu Japanese", "Buddhist Japanese", "Atheist or agnostic Japanese", "Other Japanese", "None Japanese",
+                               "Protestant Other", "Christian Other", "Muslim Other", "Hindu Other", "Buddhist Other", "Atheist or agnostic Other", "Other Other", "None Other"),
+          keep.stat = c("n","rsq"),
+          out = "mod1rob.html")   # saves as html; I converted this to PDF  
+
+# MODEL 2 ROBUSTNESS CHECK
+
+stargazer(rob_mod.1.1,rob_mod.1.2,
+          type = "text",
+          title = "Appendix D: Model 2 Robustness Check",
+          align = TRUE,
+          star.cutoffs = c(0.05, 0.01, 0.001),  
+          notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
+          notes.append = FALSE,
+          dep.var.labels = c("Linked Fate Scale"),
+          covariate.labels = c("Protestant", "Christian", "Muslim", "Hindu", "Buddhist", "Atheist or agnostic", "Other", "None",
+                               "Indian", "Korean", "Filipino", "Vietnamese","Japanese","Other",
+                               "Protestant Indian", "Christian Indian", "Muslim Indian", "Hindu Indian", "Buddhist Indian", "Atheist or agnostic Indian", "Other Indian", "None Indian",
+                               "Protestant Korean", "Christian Korean", "Muslim Korean", "Hindu Korean", "Buddhist Korean", "Atheist or agnostic Korean", "Other Korean", "None Korean",
+                               "Protestant Filipino", "Christian Filipino", "Muslim Filipino", "Hindu Filipino", "Buddhist Filipino", "Atheist or agnostic Filipino", "Other Filipino", "None Filipino",
+                               "Protestant Vietnamese", "Christian Vietnamese", "Muslim Vietnamese", "Hindu Vietnamese", "Buddhist Vietnamese", "Atheist or agnostic Vietnamese", "Other Vietnamese", "None Vietnamese",
+                               "Protestant Japanese", "Christian Japanese", "Muslim Japanese", "Hindu Japanese", "Buddhist Japanese", "Atheist or agnostic Japanese", "Other Japanese", "None Japanese",
+                               "Protestant Other", "Christian Other", "Muslim Other", "Hindu Other", "Buddhist Other", "Atheist or agnostic Other", "Other Other", "None Other"),
+          keep.stat = c("n","rsq"),
+          out = "mod2rob.html")   # saves as html; I converted this to PDF          
+
+#### REGRESSION PLOT ####
+
+plot_model(mod.1, type = "pred", terms = c("no"), 
+           ci.lvl = .95,
+           title="Figure 1b: Affect towards linked fate does not substantially \n differ by country/region-of-origin",
+           axis.title=c("Country/region-of-origin", "Asian linked fate "),
+           colors=c("black"),
+           legend.title="Status") +  geom_line() +
+  ylim(2,3) 
+
+
 
 #### Task list: #####
 ## 1 - check to make sure all the independent variables are coded as you want
