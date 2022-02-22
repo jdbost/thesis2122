@@ -335,12 +335,13 @@ linkedfate_hist_bar <- ggplot(df2,
            color = 'black',
            width = 0.6) +
   labs(x = "", 
-       y = "Percent", 
-       title  = "Do you think what happens generally to Asian people in this country \nwill have something to do with what happens in your life?") +
+       y = "Percent",
+       title = "Figure 5. Reported Feelings of Linked Fate",
+       subtitle  = "Do you think what happens generally to Asian people in this country will have something to do with what happens in your life?") +
   scale_y_continuous(labels = scales::percent) +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
-
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 linkedfate_hist_bar
 
@@ -355,16 +356,18 @@ identity_bar <- ggplot(df2,
            width = 0.75) +
   labs(x = "", 
        y = "Percent", 
-       title  = "When it comes to religion, what do you consider yourself to be?",
+       title  = "Figure 1. Religious Identity",
+       subtitle = "When it comes to religion, what do you consider yourself to be?",
        fill = "Religious identity") +
   scale_y_continuous(labels = scales::percent) + 
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 identity_bar
 
 
-# Racial composition of local religious community histogram - Bivariate
+# Racial composition of local religious community histogram - Univariate
 
 binned_relig_ethn_bar <- ggplot(data=subset(df2, !is.na(binned_relig_ethn_hist)),
                                 aes(x = binned_relig_ethn_hist,
@@ -375,12 +378,13 @@ binned_relig_ethn_bar <- ggplot(data=subset(df2, !is.na(binned_relig_ethn_hist))
   scale_y_continuous(labels = scales::percent) + 
   labs(x = "", 
        y = "Percent", 
-       title  = "Approximate percentage of Asians attending respondents' place of religious worship or gathering") +
+       title = "Figure 4. Racial/Ethnic Composition of Respondents’ Religious Community",
+       subtitle  = "Please indicate the approximate racial/ethnic composition of your \nplace of religious worship or gathering: Asian") +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 binned_relig_ethn_bar
-
 
 
 # Ethnic linked fate histogram - Univariate
@@ -392,11 +396,13 @@ linkedfate_pos_bar <- ggplot(df2,
            color = 'black',
            width = 0.5) +
   labs(x = "", 
-       y = "Percent", 
-       title  = "Do you feel positively, negatively, nor neither positive or negative \nabout the link you have with your racial or ethnic group members?") +
+       y = "Percent",
+       title = "Figure 6. Respondents' Quality of Feelings of Linked Fate",
+       subtitle  = "Do you feel positively, negatively, or neither positive or negative \nabout the link you have with your racial or ethnic group members?") +
   scale_y_continuous(labels = scales::percent) +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 linkedfate_pos_bar
 
@@ -411,10 +417,12 @@ aapi_bar <- ggplot(df2,
            width = 0.65) +
   labs(x = "", 
        y = "Percent", 
-       title  = "What do you consider to be your primary ethnicity or family ancestry?") +
+       title = "Figure 3. Ethnicity",
+       subtitle  = "What do you consider to be your primary ethnicity or family ancestry?") +
   scale_y_continuous(labels = scales::percent) +
   theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 aapi_bar
 
@@ -431,11 +439,13 @@ express_bar <- ggplot(data=subset (df2, !is.na(express_hist)),
            width = 0.6) +
   labs(x = "", 
        y = "Percent", 
-       title  = "How often do you attend a religious service or gathering?") +
+       title = "Figure 2. Religious Expression, Frequency",
+       subtitle  = "How often do you attend a religious service or gathering?") +
   scale_y_continuous(labels = scales::percent) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 30,hjust = 1),
-        plot.title = element_text(hjust = 0.5))
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 
 express_bar
 
@@ -511,7 +521,7 @@ identity_aapi_jitter <- ggplot(df2,
   geom_jitter(color = "steelblue") +
   labs(x = "Religious Identity", 
        y = "Ethnicity", 
-       title  = "Religious Identity by Ethnic Group") +
+       title  = "Figure 7. Jitterplot of Religious Identity by Ethnic Group") +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -524,7 +534,7 @@ identity_express_jitter <- ggplot(data=subset(df2, !is.na(express_hist)),
   geom_jitter(color = "steelblue") +
   labs(x = "Religious Identity", 
        y = "Level of Religious Expression", 
-       title  = "Level of Religious Expression by Religious Identity") +
+       title  = "Figure 8. Jitterplot of Religious Expression by Religious Identity") +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -537,7 +547,7 @@ identity_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(identity_hist)),
   geom_jitter(color = "steelblue") +
   labs(x = "Religious Identity", 
        y = "Level of Linked Fate Expression", 
-       title  = "Level of Linked Fate Expression by Religious Identity") +
+       title  = "Figure 9. Jitterplot of Linked Fate by Religious Identity") +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -548,9 +558,9 @@ express_linkedfate_jitter <- ggplot(data=subset (df2, !is.na(express_hist)),
                                     aes(x = express_hist, 
                                         y = linkedfate_hist)) + 
   geom_jitter(color = "steelblue") +
-  labs(x = "Frequency of Religious Expression", 
+  labs(x = "Religious Expression", 
        y = "Level of Linked Fate Expression", 
-       title  = "Level of Linked Fate Expression by Frequency of Religious Expression") +
+       title  = "Figure 10. Jitterplot of Linked Fate by Religious Expression") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 30,hjust = 1),
         plot.title = element_text(hjust = 0.5))
