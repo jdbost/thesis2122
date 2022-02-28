@@ -835,7 +835,7 @@ stargazer(int.2.1,int.2.2,
 
 stargazer(int.3,
           type = "text",
-          title = "Table 1: Regression Results",
+          title = "Appendix: Regression Results, Controlled",
           align = TRUE,
           star.cutoffs = c(0.05, 0.01, 0.001),  # or you can do the default levels
           notes = c("*p<0.05; **p<0.01; ***p<0.001"), # if you decide to change p levels
