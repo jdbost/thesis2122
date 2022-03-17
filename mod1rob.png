@@ -1,0 +1,202 @@
+
+Appendix C: Model 1 Robustness Check
+=============================================================
+                                    Dependent variable:      
+                               ------------------------------
+                                     Linked Fate Scale       
+                                     (1)            (2)      
+-------------------------------------------------------------
+Protestant                          0.049          0.239     
+                                   (0.102)        (0.178)    
+                                                             
+Christian                           0.012          0.042     
+                                   (0.069)        (0.148)    
+                                                             
+Muslim                              0.005          0.232     
+                                   (0.142)        (0.565)    
+                                                             
+Hindu                              -0.122          -0.268    
+                                   (0.078)        (0.649)    
+                                                             
+Buddhist                            0.099          0.202     
+                                   (0.079)        (0.164)    
+                                                             
+Atheist or agnostic                0.180*          0.218     
+                                   (0.073)        (0.143)    
+                                                             
+Other                               0.075          0.032     
+                                   (0.139)        (0.370)    
+                                                             
+None                              -0.177**         -0.065    
+                                   (0.068)        (0.138)    
+                                                             
+Indian                                             0.212     
+                                                  (0.252)    
+                                                             
+Korean                                             -0.435    
+                                                  (0.256)    
+                                                             
+Filipino                                           0.079     
+                                                  (0.141)    
+                                                             
+Vietnamese                                         0.141     
+                                                  (0.182)    
+                                                             
+Japanese                                           -0.110    
+                                                  (0.281)    
+                                                             
+Other                                              -0.268    
+                                                  (0.260)    
+                                                             
+Protestant Indian                                 -1.147*    
+                                                  (0.504)    
+                                                             
+Christian Indian                                   -0.633    
+                                                  (0.340)    
+                                                             
+Muslim Indian                                      -0.601    
+                                                  (0.660)    
+                                                             
+Hindu Indian                                       -0.007    
+                                                  (0.688)    
+                                                             
+Buddhist Indian                                    -0.932    
+                                                  (0.616)    
+                                                             
+Atheist or agnostic Indian                         -0.253    
+                                                  (0.321)    
+                                                             
+Other Indian                                       -0.345    
+                                                  (0.503)    
+                                                             
+None Indian                                        -0.646    
+                                                  (0.338)    
+                                                             
+Protestant Korean                                  0.128     
+                                                  (0.362)    
+                                                             
+Christian Korean                                   0.487     
+                                                  (0.293)    
+                                                             
+Muslim Korean                                                
+                                                             
+                                                             
+Hindu Korean                                       0.435     
+                                                  (1.039)    
+                                                             
+Buddhist Korean                                    0.464     
+                                                  (0.828)    
+                                                             
+Atheist or agnostic Korean                         0.404     
+                                                  (0.329)    
+                                                             
+Other Korean                                       1.010     
+                                                  (0.583)    
+                                                             
+None Korean                                        0.232     
+                                                  (0.341)    
+                                                             
+Protestant Filipino                                -0.404    
+                                                  (0.384)    
+                                                             
+Christian Filipino                                 0.019     
+                                                  (0.198)    
+                                                             
+Muslim Filipino                                              
+                                                             
+                                                             
+Hindu Filipino                                     0.921     
+                                                  (1.282)    
+                                                             
+Buddhist Filipino                                  -1.549    
+                                                  (1.118)    
+                                                             
+Atheist or agnostic Filipino                       -0.125    
+                                                  (0.272)    
+                                                             
+Other Filipino                                     -0.093    
+                                                  (0.562)    
+                                                             
+None Filipino                                      -0.373    
+                                                  (0.282)    
+                                                             
+Protestant Vietnamese                              -0.148    
+                                                  (0.812)    
+                                                             
+Christian Vietnamese                               -0.333    
+                                                  (0.334)    
+                                                             
+Muslim Vietnamese                                            
+                                                             
+                                                             
+Hindu Vietnamese                                             
+                                                             
+                                                             
+Buddhist Vietnamese                                -0.159    
+                                                  (0.261)    
+                                                             
+Atheist or agnostic Vietnamese                     0.027     
+                                                  (0.293)    
+                                                             
+Other Vietnamese                                   -0.441    
+                                                  (0.631)    
+                                                             
+None Vietnamese                                    -0.261    
+                                                  (0.267)    
+                                                             
+Protestant Japanese                                -0.196    
+                                                  (0.380)    
+                                                             
+Christian Japanese                                 -0.005    
+                                                  (0.317)    
+                                                             
+Muslim Japanese                                    0.610     
+                                                  (1.265)    
+                                                             
+Hindu Japanese                                               
+                                                             
+                                                             
+Buddhist Japanese                                  -0.031    
+                                                  (0.324)    
+                                                             
+Atheist or agnostic Japanese                       0.018     
+                                                  (0.323)    
+                                                             
+Other Japanese                                     0.644     
+                                                  (0.550)    
+                                                             
+None Japanese                                      -0.067    
+                                                  (0.314)    
+                                                             
+Protestant Other                                   0.345     
+                                                  (0.431)    
+                                                             
+Christian Other                                    0.441     
+                                                  (0.308)    
+                                                             
+Muslim Other                                       0.116     
+                                                  (0.631)    
+                                                             
+Hindu Other                                        -0.107    
+                                                  (0.741)    
+                                                             
+Buddhist Other                                     0.191     
+                                                  (0.307)    
+                                                             
+Atheist or agnostic Other                          0.317     
+                                                  (0.319)    
+                                                             
+Other Other                                        0.135     
+                                                  (0.539)    
+                                                             
+None Other                                         0.213     
+                                                  (0.295)    
+                                                             
+Constant                          1.300***        1.268***   
+                                   (0.050)        (0.122)    
+                                                             
+-------------------------------------------------------------
+Observations                        3,006          3,006     
+R2                                  0.011          0.026     
+=============================================================
+Note:                           *p<0.05; **p<0.01; ***p<0.001
